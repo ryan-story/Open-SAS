@@ -1,0 +1,39 @@
+/* Basic SAS Analysis Example */
+/* This demonstrates basic data manipulation and analysis */
+
+/* Create a sample dataset */
+data work.sample_data;
+    input name $ age height weight;
+    datalines;
+John 25 70 180
+Mary 30 65 140
+Bob 35 72 200
+Alice 28 68 160
+Charlie 32 69 175
+;
+run;
+
+/* Display the data */
+proc print data=work.sample_data;
+run;
+
+/* Calculate basic statistics */
+proc means data=work.sample_data;
+    var age height weight;
+run;
+
+/* Create a new variable */
+data work.enhanced_data;
+    set work.sample_data;
+    bmi = weight / (height**2) * 703; /* Convert to standard BMI */
+    age_group = ifc(age < 30, 'Young', 'Mature');
+run;
+
+/* Display enhanced data */
+proc print data=work.enhanced_data;
+run;
+
+/* Frequency analysis */
+proc freq data=work.enhanced_data;
+    tables age_group;
+run;

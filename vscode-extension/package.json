@@ -1,0 +1,89 @@
+{
+  "name": "open-sas",
+  "displayName": "Open-SAS",
+  "description": "SAS syntax highlighting and execution support for .osas files",
+  "version": "0.1.0",
+  "publisher": "ryan-story",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Other"
+  ],
+  "keywords": [
+    "sas",
+    "statistics",
+    "data-analysis",
+    "python"
+  ],
+  "activationEvents": [
+    "onLanguage:osas"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "osas",
+        "aliases": [
+          "Open-SAS",
+          "osas"
+        ],
+        "extensions": [
+          ".osas"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "osas",
+        "scopeName": "source.sas",
+        "path": "./syntaxes/sas.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "osas",
+        "path": "./snippets/sas.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "open-sas.runFile",
+        "title": "Run Open-SAS File",
+        "category": "Open-SAS"
+      },
+      {
+        "command": "open-sas.runSelection",
+        "title": "Run Selection",
+        "category": "Open-SAS"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "open-sas.runFile",
+          "when": "resourceExtname == .osas",
+          "group": "navigation"
+        },
+        {
+          "command": "open-sas.runSelection",
+          "when": "resourceExtname == .osas && editorHasSelection",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.60.0",
+    "@types/node": "16.x",
+    "typescript": "^4.4.3"
+  }
+}

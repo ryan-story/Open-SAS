@@ -1,0 +1,103 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "SAS",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#procedures"
+    },
+    {
+      "include": "#functions"
+    },
+    {
+      "include": "#numbers"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.block.sas",
+          "begin": "/\\*",
+          "end": "\\*/"
+        },
+        {
+          "name": "comment.line.sas",
+          "begin": "\\*",
+          "end": "$"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.single.sas",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.sas",
+              "match": "''"
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.double.sas",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.sas",
+              "match": "\"\""
+            }
+          ]
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.sas",
+          "match": "\\b(?:data|set|merge|update|modify|by|where|if|then|else|do|end|run|stop|abort|return|link|goto|label|format|informat|length|retain|drop|keep|rename|array|dim|hbound|lbound|call|put|input|file|infile|cards|datalines|datalines4|cards4)\\b"
+        },
+        {
+          "name": "keyword.other.sas",
+          "match": "\\b(?:proc|quit|run|libname|filename|options|title|footnote|ods|%let|%put|%if|%then|%else|%do|%end|%macro|%mend|%include|%inc)\\b"
+        }
+      ]
+    },
+    "procedures": {
+      "patterns": [
+        {
+          "name": "entity.name.function.proc.sas",
+          "match": "\\bproc\\s+(?:sql|means|freq|sort|print|contents|datasets|import|export|univariate|corr|reg|glm|anova|mixed|logistic|phreg|lifetest|surveymeans|surveyfreq|surveyselect|surveyreg|surveyphreg|surveyimpute|surveyimputation|surveyselect|surveyfreq|surveymeans|surveyreg|surveyphreg|surveyimpute|surveyimputation)\\b"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "support.function.sas",
+          "match": "\\b(?:sum|mean|std|var|min|max|count|n|nmiss|first|last|lag|dif|int|round|ceil|floor|abs|sqrt|log|exp|sin|cos|tan|substr|scan|index|length|compress|trim|left|right|upcase|lowcase|propcase|cat|catt|cats|catx|input|put|today|datetime|time|datepart|timepart|year|month|day|weekday|qtr|hour|minute|second|mdy|hms|dhms|intnx|intck|weekday|qtr|year|month|day|hour|minute|second|today|datetime|time|datepart|timepart|mdy|hms|dhms|intnx|intck)\\b"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.sas",
+          "match": "\\b\\d+\\.?\\d*(?:e[+-]?\\d+)?\\b"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.sas"
+}
