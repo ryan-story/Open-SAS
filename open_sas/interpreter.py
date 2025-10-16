@@ -113,7 +113,13 @@ class SASInterpreter:
             for i, char in enumerate(line):
                 if char == '*':
                     # Check if it's at start of word (preceded by whitespace or at start of line)
+                    # AND not part of arithmetic (not preceded by alphanumeric characters)
                     if i == 0 or line[i-1].isspace():
+                        # Additional check: make sure it's not part of arithmetic
+                        # Look at the character before the * to see if it's part of a variable name
+                        if i > 0 and line[i-1].isalnum():
+                            # This is part of arithmetic, not a comment
+                            continue
                         # Check if it's not in a string
                         before_comment = line[:i]
                         if before_comment.count("'") % 2 == 0 and before_comment.count('"') % 2 == 0:

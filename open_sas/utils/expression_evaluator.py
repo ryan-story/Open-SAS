@@ -61,6 +61,10 @@ class ExpressionEvaluator:
         
         try:
             print(f"Evaluating assignment: {var_name} = {expression}")
+            # Make sure we're working with a copy to avoid modifying the original
+            if not hasattr(data, '_is_copy'):
+                data = data.copy()
+                data._is_copy = True
             # Evaluate the expression for each row
             result = self._evaluate_expression(expression, data)
             print(f"Result type: {type(result)}, length: {len(result) if hasattr(result, '__len__') else 'N/A'}")
