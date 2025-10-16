@@ -42,18 +42,24 @@ class ProcMeans:
         # Get BY variables
         by_vars = proc_info.options.get('by', [])
         
+        # Get CLASS variables (treat same as BY for grouping)
+        class_vars = proc_info.options.get('class', [])
+        
+        # Combine BY and CLASS variables for grouping
+        group_vars = by_vars + class_vars
+        
         # Filter to only include variables that exist in the data
         var_vars = [var for var in var_vars if var in data.columns]
-        by_vars = [var for var in by_vars if var in data.columns]
+        group_vars = [var for var in group_vars if var in data.columns]
         
         if not var_vars:
             results['output_text'].append("ERROR: No valid analysis variables found.")
             return results
         
         # Calculate statistics
-        if by_vars:
+        if group_vars:
             # Grouped analysis
-            grouped = data.groupby(by_vars)
+            grouped = data.groupby(group_vars)
             stats_df = grouped[var_vars].agg(['count', 'mean', 'std', 'min', 'max'])
             
             # Flatten column names
@@ -85,8 +91,8 @@ class ProcMeans:
         
         # Format output
         results['output_text'].append(f"Analysis Variables: {', '.join(var_vars)}")
-        if by_vars:
-            results['output_text'].append(f"BY Variables: {', '.join(by_vars)}")
+        if group_vars:
+            results['output_text'].append(f"Grouping Variables: {', '.join(group_vars)}")
         results['output_text'].append("")
         
         # Convert DataFrame to formatted text
