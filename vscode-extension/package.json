@@ -1,9 +1,24 @@
 {
   "name": "open-sas",
   "displayName": "Open-SAS",
-  "description": "SAS syntax highlighting and execution support for .osas files",
+  "description": "SAS syntax highlighting and execution support for .osas files with Python backend",
   "version": "0.1.0",
   "publisher": "ryan-story",
+  "author": {
+    "name": "Ryan Story",
+    "email": "ryan@stryve.com",
+    "url": "https://github.com/ryan-story"
+  },
+  "homepage": "https://github.com/ryan-story/Open-SAS",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ryan-story/Open-SAS.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ryan-story/Open-SAS/issues"
+  },
+  "license": "MIT",
+  "icon": "icon.png",
   "engines": {
     "vscode": "^1.60.0"
   },
