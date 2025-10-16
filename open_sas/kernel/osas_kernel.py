@@ -58,6 +58,8 @@ class OSASKernel(Kernel):
         self.datasets_before_execution = set(self.interpreter.data_sets.keys())
         
         try:
+            print(f"DEBUG: About to execute SAS code: {repr(code)}", file=sys.stderr)
+            
             # Execute SAS code and capture output
             with redirect_stdout(self.output_buffer), redirect_stderr(self.error_buffer):
                 result = self.interpreter.run_code(code)
@@ -66,8 +68,12 @@ class OSASKernel(Kernel):
             output = self.output_buffer.getvalue()
             errors = self.error_buffer.getvalue()
             
+            print(f"DEBUG: Output: {repr(output)}", file=sys.stderr)
+            print(f"DEBUG: Errors: {repr(errors)}", file=sys.stderr)
+            
             # Send output to notebook
             if output and not silent:
+                print("DEBUG: Sending stdout to notebook", file=sys.stderr)
                 self.send_response(self.iopub_socket, 'stream', {
                     'name': 'stdout',
                     'text': output
@@ -75,6 +81,7 @@ class OSASKernel(Kernel):
             
             # Send errors to notebook
             if errors and not silent:
+                print("DEBUG: Sending stderr to notebook", file=sys.stderr)
                 self.send_response(self.iopub_socket, 'stream', {
                     'name': 'stderr',
                     'text': errors
@@ -83,8 +90,10 @@ class OSASKernel(Kernel):
             # Get datasets created in this execution
             datasets = self._get_new_datasets_info()
             if datasets and not silent:
+                print(f"DEBUG: Sending datasets display: {datasets}", file=sys.stderr)
                 self._send_datasets_display(datasets)
             
+            print("DEBUG: Execution completed successfully", file=sys.stderr)
             return {
                 'status': 'ok',
                 'execution_count': self.execution_count,
