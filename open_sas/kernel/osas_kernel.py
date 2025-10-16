@@ -64,6 +64,7 @@ class OSASKernel(IPythonKernel):
         
         logger.info(f"do_execute called with code: {repr(code[:100])}...")
         logger.info(f"Full code received: {repr(code)}")
+        logger.info(f"Code lines: {code.split(chr(10))}")
         logger.info(f"silent={silent}, store_history={store_history}, allow_stdin={allow_stdin}")
         logger.info(f"execution_count: {self.execution_count}")
         
