@@ -53,12 +53,20 @@
       {
         "command": "open-sas.runFile",
         "title": "Run Open-SAS File",
-        "category": "Open-SAS"
+        "category": "Open-SAS",
+        "icon": "$(play)"
       },
       {
         "command": "open-sas.runSelection",
         "title": "Run Selection",
-        "category": "Open-SAS"
+        "category": "Open-SAS",
+        "icon": "$(play-circle)"
+      },
+      {
+        "command": "open-sas.checkSyntax",
+        "title": "Check Syntax",
+        "category": "Open-SAS",
+        "icon": "$(check)"
       }
     ],
     "menus": {
@@ -72,8 +80,40 @@
           "command": "open-sas.runSelection",
           "when": "resourceExtname == .osas && editorHasSelection",
           "group": "navigation"
+        },
+        {
+          "command": "open-sas.checkSyntax",
+          "when": "resourceExtname == .osas",
+          "group": "navigation"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "open-sas.runFile",
+          "when": "resourceExtname == .osas",
+          "group": "navigation"
         }
       ]
+    },
+    "configuration": {
+      "title": "Open-SAS",
+      "properties": {
+        "open-sas.pythonPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to Python executable. If not specified, the extension will try to find Python automatically."
+        },
+        "open-sas.openSASPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to Open-SAS runner script. If not specified, the extension will try to find it automatically."
+        },
+        "open-sas.showOutputOnRun": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show output channel when running SAS code."
+        }
+      }
     }
   },
   "scripts": {
