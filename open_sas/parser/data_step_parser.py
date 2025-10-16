@@ -111,6 +111,7 @@ class DataStepParser:
                     if ';' in next_line:
                         break
                     j += 1
+                print(f"Combined line: {combined_line}")
                 combined_lines.append(combined_line)
                 i = j
             else:
@@ -176,6 +177,9 @@ class DataStepParser:
                 if by_match:
                     vars_list = [v.strip() for v in by_match.group(1).split()]
                     by_vars.extend(vars_list)
+        
+        # Debug: Print parsed assignments
+        print(f"Parsed variable assignments: {variable_assignments}")
         
         return DataStepInfo(
             output_dataset=output_dataset,
