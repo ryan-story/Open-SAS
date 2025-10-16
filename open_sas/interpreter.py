@@ -106,6 +106,7 @@ class SASInterpreter:
         print(f"Code lines before cleaning: {lines}")
         cleaned_lines = []
         for line in lines:
+            print(f"Processing line: {repr(line)}")
             # Find * comments that are not part of strings or arithmetic
             # Only treat * as comment if it's at the start of a word (after whitespace)
             comment_pos = -1
@@ -117,9 +118,11 @@ class SASInterpreter:
                         before_comment = line[:i]
                         if before_comment.count("'") % 2 == 0 and before_comment.count('"') % 2 == 0:
                             comment_pos = i
+                            print(f"Found comment at position {i} in line: {repr(line)}")
                             break
             if comment_pos != -1:
                 line = line[:comment_pos]
+                print(f"Trimmed line to: {repr(line)}")
             cleaned_lines.append(line)
         
         cleaned_code = '\n'.join(cleaned_lines)
