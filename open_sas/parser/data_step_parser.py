@@ -83,44 +83,31 @@ class DataStepParser:
         
         # First pass: combine multi-line assignments
         print(f"Starting multi-line parsing with {len(lines)} lines")
-        combined_lines = []
-        i = 0
-        while i < len(lines):
-            line = lines[i].strip()
-            if not line or line.upper().startswith('DATA '):
-                i += 1
-                continue
-                
-            if line.upper() == 'RUN;':
-                break
-                
-            # Check if this line starts an assignment that continues on next lines
-            if '=' in line and not line.upper().startswith(('DROP', 'KEEP', 'RENAME', 'BY')):
-                # Combine with following lines until we hit a semicolon or new statement
-                combined_line = line
-                j = i + 1
-                while j < len(lines):
-                    next_line = lines[j].strip()
-                    if not next_line or next_line.upper() == 'RUN;':
-                        break
-                    if next_line.upper().startswith(('SET', 'WHERE', 'IF', 'DROP', 'KEEP', 'RENAME', 'BY')):
-                        break
-                    if '=' in next_line and not next_line.upper().startswith(('DROP', 'KEEP', 'RENAME', 'BY')):
-                        # This is a new assignment, stop here
-                        break
-                    combined_line += ' ' + next_line
-                    if ';' in next_line:
-                        break
-                    j += 1
-                # Remove semicolon from the end if present
-                if combined_line.endswith(';'):
-                    combined_line = combined_line[:-1]
-                print(f"Combined line: {combined_line}")
-                combined_lines.append(combined_line)
-                i = j
-            else:
-                combined_lines.append(line)
-                i += 1
+        print(f"Input lines: {lines}")
+        
+        # Simple approach: join all lines and then split by semicolons
+        full_text = ' '.join(lines)
+        print(f"Full text: {full_text}")
+        
+        # Find the DATA step content (between DATA and RUN)
+        data_start = full_text.upper().find('DATA ')
+        if data_start == -1:
+            raise ValueError("No DATA statement found")
+        
+        # Find the content after DATA statement
+        content_start = full_text.find(';', data_start) + 1
+        run_pos = full_text.upper().find('RUN;', content_start)
+        if run_pos == -1:
+            raise ValueError("No RUN statement found")
+        
+        data_content = full_text[content_start:run_pos].strip()
+        print(f"Data content: {data_content}")
+        
+        # Split by semicolons to get individual statements
+        statements = [stmt.strip() for stmt in data_content.split(';') if stmt.strip()]
+        print(f"Statements: {statements}")
+        
+        combined_lines = statements
         
         # Second pass: parse the combined lines
         for line in combined_lines:
