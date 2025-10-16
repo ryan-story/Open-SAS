@@ -17,12 +17,13 @@ from open_sas import SASInterpreter
 class OSASKernel(Kernel):
     """Jupyter kernel for Open-SAS."""
     
-    implementation = 'Open-SAS'
+    implementation = 'open_sas'
     implementation_version = '0.1.0'
     language = 'sas'
     language_version = '9.4'
     language_info = {
-        'name': 'osas',
+        'name': 'sas',
+        'version': '9.4',
         'mimetype': 'text/x-sas',
         'file_extension': '.osas',
         'pygments_lexer': 'sas',
@@ -84,9 +85,6 @@ class OSASKernel(Kernel):
             if datasets and not silent:
                 self._send_datasets_display(datasets)
             
-            # Increment execution count
-            self.execution_count += 1
-            
             return {
                 'status': 'ok',
                 'execution_count': self.execution_count,
@@ -97,17 +95,12 @@ class OSASKernel(Kernel):
         except Exception as e:
             # Send error to notebook
             if not silent:
-                error_msg = f"Error executing SAS code: {str(e)}\n"
-                error_msg += traceback.format_exc()
-                
-                self.send_response(self.iopub_socket, 'error', {
+                error_content = {
                     'ename': 'SASError',
                     'evalue': str(e),
-                    'traceback': [error_msg]
-                })
-            
-            # Increment execution count even on error
-            self.execution_count += 1
+                    'traceback': [traceback.format_exc()]
+                }
+                self.send_response(self.iopub_socket, 'error', error_content)
             
             return {
                 'status': 'error',
