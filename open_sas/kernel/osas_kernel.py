@@ -112,6 +112,7 @@ class OSASKernel(IPythonKernel):
         
         try:
             logger.info("Starting SAS code execution")
+            logger.info(f"Code being passed to interpreter: {repr(code)}")
             # Execute SAS code and capture output
             with redirect_stdout(self.output_buffer), redirect_stderr(self.error_buffer):
                 result = self.interpreter.run_code(code)
