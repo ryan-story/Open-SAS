@@ -80,7 +80,7 @@ The extension can be configured through VS Code settings:
 
 ## Demo
 
-Check out the comprehensive demo in `osas_walkthrough.ipynb` to see all features in action.
+Check out the comprehensive demo in `examples/osas_walkthrough.ipynb` to see all features in action.
 
 ## Contributing
 

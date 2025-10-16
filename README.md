@@ -107,7 +107,7 @@ python -m open_sas.cli interactive
 
 ## Demo
 
-Check out `osas_walkthrough.ipynb` for a comprehensive demonstration of Open-SAS capabilities including:
+Check out `examples/osas_walkthrough.ipynb` for a comprehensive demonstration of Open-SAS capabilities including:
 - DATA step with DATALINES
 - PROC MEANS with CLASS variables and OUTPUT statements
 - PROC FREQ with cross-tabulations
@@ -139,8 +139,7 @@ Open-SAS/
 │       ├── expression_evaluator.py
 │       ├── data_utils.py
 │       └── libname_manager.py
-├── examples/                # Example .osas files
-├── osas_walkthrough.ipynb   # Comprehensive demo notebook
+├── examples/                # Example files and demo notebook
 ├── setup.py                 # Package setup
 └── README.md
 ```
