@@ -107,7 +107,32 @@ class DataStepParser:
         statements = [stmt.strip() for stmt in data_content.split(';') if stmt.strip()]
         print(f"Statements: {statements}")
         
-        combined_lines = statements
+        # Further split statements that contain multiple assignments
+        final_statements = []
+        for stmt in statements:
+            # Check if statement contains multiple assignments (multiple '=' signs)
+            if stmt.count('=') > 1:
+                # Split by '=' and reconstruct assignments
+                parts = stmt.split('=')
+                if len(parts) >= 3:
+                    # First assignment
+                    first_var = parts[0].strip()
+                    first_value = parts[1].strip()
+                    final_statements.append(f"{first_var} = {first_value}")
+                    
+                    # Remaining assignments
+                    for i in range(2, len(parts)):
+                        if i < len(parts) - 1:
+                            var = parts[i].strip()
+                            value = parts[i + 1].strip()
+                            final_statements.append(f"{var} = {value}")
+                else:
+                    final_statements.append(stmt)
+            else:
+                final_statements.append(stmt)
+        
+        print(f"Final statements: {final_statements}")
+        combined_lines = final_statements
         
         # Second pass: parse the combined lines
         for line in combined_lines:
