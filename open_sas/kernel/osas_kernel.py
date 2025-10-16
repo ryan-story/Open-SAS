@@ -258,6 +258,10 @@ class OSASKernel(IPythonKernel):
         current_datasets = set(self.interpreter.data_sets.keys())
         new_datasets = current_datasets - self.datasets_before_execution
         
+        print(f"Datasets before execution: {self.datasets_before_execution}")
+        print(f"Current datasets: {current_datasets}")
+        print(f"New datasets: {new_datasets}")
+        
         for name in new_datasets:
             df = self.interpreter.data_sets[name]
             datasets[name] = {
