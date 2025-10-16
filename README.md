@@ -1,7 +1,7 @@
 # Open-SAS
 
 <div align="center">
-  <img src="media/open-sas-logo.svg" alt="Open-SAS Logo" width="200">
+  <img src="media/osas.png" alt="Open-SAS Logo" width="200">
   <h3>A Python-based SAS interpreter with Jupyter notebook support</h3>
   <p>Write SAS code with full syntax highlighting and Python backend execution.</p>
 </div>

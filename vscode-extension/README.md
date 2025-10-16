@@ -1,7 +1,7 @@
 # Open-SAS VS Code Extension
 
 <div align="center">
-  <img src="../media/open-sas-logo.svg" alt="Open-SAS Logo" width="100">
+  <img src="../media/osas.png" alt="Open-SAS Logo" width="100">
   <h3>SAS syntax highlighting and execution support for VS Code</h3>
 </div>
 
