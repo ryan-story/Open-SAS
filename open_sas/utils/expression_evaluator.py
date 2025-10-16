@@ -172,6 +172,7 @@ class ExpressionEvaluator:
         try:
             # Remove semicolon if present
             expression = expression.rstrip(';')
+            print(f"Evaluating arithmetic: {expression}")
             
             # Replace column names with their values
             result = expression
@@ -180,10 +181,16 @@ class ExpressionEvaluator:
                     # Replace column references with actual values
                     result = result.replace(col, f"data['{col}']")
             
+            print(f"Arithmetic expression after column replacement: {result}")
+            
             # Evaluate the expression
-            return eval(result)
+            evaluated_result = eval(result)
+            print(f"Arithmetic result: {evaluated_result}")
+            return evaluated_result
         except Exception as e:
             print(f"Error evaluating arithmetic expression '{expression}': {e}")
+            import traceback
+            traceback.print_exc()
             # Fallback: return zeros
             return pd.Series([0] * len(data), index=data.index)
     

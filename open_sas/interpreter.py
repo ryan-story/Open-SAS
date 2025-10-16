@@ -238,7 +238,7 @@ class SASInterpreter:
                                     if self.libname_manager.save_dataset(libname, dataset_name, input_data):
                                         print(f"Saved dataset {output_dataset} to library {libname}")
                                 
-                                print(f"Created dataset: {output_dataset} with {len(input_data)} observations")
+                                # Dataset creation message will be printed in the main execution path
                                 return
             else:
                 # Parse the DATA step normally
