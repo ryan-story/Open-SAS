@@ -3,7 +3,7 @@
   "displayName": "Open-SAS",
   "description": "SAS syntax highlighting and execution support for .osas files with Python backend",
   "version": "0.1.0",
-  "publisher": "ryan-story",
+  "publisher": "RyanBlakeStory",
   "author": {
     "name": "Ryan Story",
     "email": "ryan@stryve.com",
