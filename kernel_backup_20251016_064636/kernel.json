@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/opt/anaconda3/bin/python",
+    "-m",
+    "open_sas.kernel",
+    "-f",
+    "{connection_file}"
+  ],
+  "display_name": "Open-SAS",
+  "language": "sas",
+  "mimetype": "text/x-sas",
+  "file_extension": ".osas",
+  "codemirror_mode": "sas",
+  "pygments_lexer": "sas"
+}

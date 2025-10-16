@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-10-16T06:46:36.859184",
+  "kernel_spec": {
+    "argv": [
+      "/opt/anaconda3/bin/python",
+      "-m",
+      "open_sas.kernel",
+      "-f",
+      "{connection_file}"
+    ],
+    "display_name": "Open-SAS",
+    "language": "sas",
+    "mimetype": "text/x-sas",
+    "file_extension": ".osas",
+    "codemirror_mode": "sas",
+    "pygments_lexer": "sas"
+  },
+  "kernel_location": "/Users/rs255/Library/Jupyter/kernels/osas/",
+  "python_path": "/opt/anaconda3/bin/python",
+  "working_notebooks": [
+    "monsters.ipynb",
+    "quick_test.ipynb"
+  ],
+  "status": "WORKING"
+}

@@ -9,6 +9,7 @@ import * as vscode from 'vscode';
 import { spawn, ChildProcess } from 'child_process';
 import * as path from 'path';
 import * as os from 'os';
+import { OSASNotebookProvider } from './notebook/osasNotebookProvider';
 
 let outputChannel: vscode.OutputChannel;
 let logChannel: vscode.OutputChannel;
@@ -27,8 +28,23 @@ export function activate(context: vscode.ExtensionContext) {
     
     context.subscriptions.push(runFileCommand, runSelectionCommand, checkSyntaxCommand);
     
-    // Note: Notebook support will be added in a future update
-    // The VS Code notebook API is still evolving
+    // Register notebook provider
+    const notebookProvider = new OSASNotebookProvider();
+    const notebookController = vscode.notebooks.createNotebookController(
+        'osas-notebook-controller',
+        'osas-notebook',
+        'Open-SAS'
+    );
+    
+    notebookController.supportedLanguages = ['sas'];
+    notebookController.supportsExecutionOrder = true;
+    notebookController.executeHandler = (cells, notebook, controller) => {
+        for (const cell of cells) {
+            notebookProvider.executeCell(notebook, cell);
+        }
+    };
+    
+    context.subscriptions.push(notebookController);
     
     // Show output channel on first activation
     outputChannel.show();

@@ -33,10 +33,15 @@ class OSASKernel(Kernel):
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.interpreter = SASInterpreter()
-        self.output_buffer = io.StringIO()
-        self.error_buffer = io.StringIO()
-        self.datasets_before_execution = set()
+        try:
+            self.interpreter = SASInterpreter()
+            self.output_buffer = io.StringIO()
+            self.error_buffer = io.StringIO()
+            self.datasets_before_execution = set()
+        except Exception as e:
+            # Log the error but don't fail initialization
+            print(f"Warning: Failed to initialize SAS interpreter: {e}")
+            self.interpreter = None
     
     def do_execute(self, code, silent, store_history=True, user_expressions=None, allow_stdin=False):
         """Execute SAS code in the kernel."""
@@ -50,6 +55,27 @@ class OSASKernel(Kernel):
                 'user_expressions': {},
             }
         
+        # Check if interpreter is available
+        if self.interpreter is None:
+            try:
+                self.interpreter = SASInterpreter()
+                self.output_buffer = io.StringIO()
+                self.error_buffer = io.StringIO()
+            except Exception as e:
+                error_msg = f"Failed to initialize SAS interpreter: {e}"
+                if not silent:
+                    self.send_response(self.iopub_socket, 'stream', {
+                        'name': 'stderr',
+                        'text': error_msg
+                    })
+                return {
+                    'status': 'error',
+                    'execution_count': self.execution_count,
+                    'ename': 'SASError',
+                    'evalue': error_msg,
+                    'traceback': [error_msg]
+                }
+        
         # Clear buffers
         self.output_buffer = io.StringIO()
         self.error_buffer = io.StringIO()
@@ -58,8 +84,6 @@ class OSASKernel(Kernel):
         self.datasets_before_execution = set(self.interpreter.data_sets.keys())
         
         try:
-            print(f"DEBUG: About to execute SAS code: {repr(code)}", file=sys.stderr)
-            
             # Execute SAS code and capture output
             with redirect_stdout(self.output_buffer), redirect_stderr(self.error_buffer):
                 result = self.interpreter.run_code(code)
@@ -68,12 +92,8 @@ class OSASKernel(Kernel):
             output = self.output_buffer.getvalue()
             errors = self.error_buffer.getvalue()
             
-            print(f"DEBUG: Output: {repr(output)}", file=sys.stderr)
-            print(f"DEBUG: Errors: {repr(errors)}", file=sys.stderr)
-            
             # Send output to notebook
             if output and not silent:
-                print("DEBUG: Sending stdout to notebook", file=sys.stderr)
                 self.send_response(self.iopub_socket, 'stream', {
                     'name': 'stdout',
                     'text': output
@@ -81,7 +101,6 @@ class OSASKernel(Kernel):
             
             # Send errors to notebook
             if errors and not silent:
-                print("DEBUG: Sending stderr to notebook", file=sys.stderr)
                 self.send_response(self.iopub_socket, 'stream', {
                     'name': 'stderr',
                     'text': errors
@@ -90,10 +109,8 @@ class OSASKernel(Kernel):
             # Get datasets created in this execution
             datasets = self._get_new_datasets_info()
             if datasets and not silent:
-                print(f"DEBUG: Sending datasets display: {datasets}", file=sys.stderr)
                 self._send_datasets_display(datasets)
             
-            print("DEBUG: Execution completed successfully", file=sys.stderr)
             return {
                 'status': 'ok',
                 'execution_count': self.execution_count,
