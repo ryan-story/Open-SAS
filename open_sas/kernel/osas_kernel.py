@@ -10,11 +10,11 @@ import sys
 import io
 import traceback
 from contextlib import redirect_stdout, redirect_stderr
-from ipykernel.kernelbase import Kernel
+from ipykernel.ipkernel import IPythonKernel
 from open_sas import SASInterpreter
 
 
-class OSASKernel(Kernel):
+class OSASKernel(IPythonKernel):
     """Jupyter kernel for Open-SAS."""
     
     implementation = 'open_sas'
