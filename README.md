@@ -12,6 +12,7 @@ Open-SAS bridges the gap between SAS and Python by providing:
 - **SAS-like syntax** for data manipulation and analysis
 - **Python backend** for execution and performance
 - **Jupyter notebook support** with Open-SAS kernel
+- **VS Code extension** with syntax highlighting and execution
 - **Cross-platform compatibility** (Windows, macOS, Linux)
 - **Open source** and free to use
 
@@ -19,7 +20,7 @@ Open-SAS bridges the gap between SAS and Python by providing:
 
 ### Core Interpreter
 - SAS DATA step functionality with DATALINES support
-- Major PROC procedures (PROC MEANS, PROC FREQ, PROC SORT, PROC PRINT, etc.)
+- Major PROC procedures (PROC MEANS, PROC FREQ, PROC SORT, PROC PRINT)
 - SAS-style data manipulation and analysis
 - Python pandas/numpy backend for performance
 - Clean, professional output matching SAS behavior
@@ -29,6 +30,12 @@ Open-SAS bridges the gap between SAS and Python by providing:
 - Interactive SAS programming in notebook environment
 - Rich output display with formatted tables
 - Dataset visualization and exploration
+
+### VS Code Extension
+- Syntax highlighting for `.osas` and `.sas` files
+- Code snippets for common SAS patterns
+- File execution directly from VS Code
+- Notebook support for interactive analysis
 
 ### Supported SAS Features
 - **DATA Steps**: Variable creation, conditional logic, DATALINES input
@@ -55,6 +62,10 @@ python -m open_sas.kernel install
 # List available kernels
 jupyter kernelspec list
 ```
+
+### VS Code Extension
+1. Install from VS Code Marketplace: "Open-SAS" by RyanBlakeStory
+2. Or install from source (see Development section)
 
 ## Quick Start
 
@@ -96,7 +107,13 @@ run;
 3. Select "osas" as the kernel
 4. Write SAS code in cells and execute
 
-### 3. Command Line Usage
+### 3. VS Code Usage
+1. Install the Open-SAS extension from the marketplace
+2. Create a new file with `.osas` extension
+3. Write your SAS code
+4. Use `Ctrl+Shift+P` → "Open-SAS: Run File" to execute
+
+### 4. Command Line Usage
 ```bash
 # Run SAS code from file
 python -m open_sas.cli run example.osas
@@ -139,7 +156,9 @@ Open-SAS/
 │       ├── expression_evaluator.py
 │       ├── data_utils.py
 │       └── libname_manager.py
+├── vscode-extension/         # VS Code extension
 ├── examples/                # Example files and demo notebook
+├── media/                   # Logo and icons
 ├── setup.py                 # Package setup
 └── README.md
 ```
@@ -169,6 +188,7 @@ python -c "from open_sas import SASInterpreter; print('Open-SAS loaded successfu
 - [x] PROC PRINT for data display
 - [x] NOPRINT option for silent execution
 - [x] Jupyter notebook kernel
+- [x] VS Code extension with syntax highlighting
 - [x] Clean, professional output
 - [x] Proper SAS-like behavior
 
@@ -176,8 +196,18 @@ python -c "from open_sas import SASInterpreter; print('Open-SAS loaded successfu
 - [ ] Additional PROC procedures (PROC SQL, PROC REG, etc.)
 - [ ] Advanced macro functionality
 - [ ] Performance optimizations
-- [ ] VS Code extension
 - [ ] SAS/ACCESS compatibility layer
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+### Areas for Contribution
+- Additional PROC procedures
+- SAS macro functionality
+- Performance optimizations
+- VS Code extension features
+- Documentation and examples
 
 ## License
 
