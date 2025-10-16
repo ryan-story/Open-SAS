@@ -66,7 +66,7 @@
       "patterns": [
         {
           "name": "keyword.control.sas",
-          "match": "\\b(?:data|set|merge|update|modify|by|where|if|then|else|do|end|run|stop|abort|return|link|goto|label|format|informat|length|retain|drop|keep|rename|array|dim|hbound|lbound|call|put|input|file|infile|cards|datalines|datalines4|cards4)\\b"
+          "match": "\\b(?:data|set|merge|update|modify|by|where|if|then|else|do|end|run|stop|abort|return|link|goto|label|format|informat|length|retain|drop|keep|rename|array|dim|hbound|lbound|call|put|input|file|infile|cards|datalines|datalines4|cards4|var|class|tables|model|output)\\b"
         },
         {
           "name": "keyword.other.sas",
