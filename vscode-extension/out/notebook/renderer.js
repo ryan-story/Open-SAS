@@ -1,23 +1,19 @@
+"use strict";
 /**
  * Open-SAS Notebook Renderer
- * 
+ *
  * This module provides custom rendering for Open-SAS notebook outputs,
  * including datasets, PROC results, and other SAS-specific content.
  */
-
-import * as vscode from 'vscode';
-
-export class OSASNotebookRenderer {
-    private context: vscode.ExtensionContext;
-
-    constructor(context: vscode.ExtensionContext) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.OSASNotebookRenderer = void 0;
+class OSASNotebookRenderer {
+    constructor(context) {
         this.context = context;
     }
-
-    render(outputItem: vscode.NotebookCellOutputItem, element: HTMLElement): void {
+    render(outputItem, element) {
         const mimeType = outputItem.mime;
         const data = outputItem.data;
-
         switch (mimeType) {
             case 'text/x-sas-output':
                 this.renderSASOutput(data, element);
@@ -35,8 +31,7 @@ export class OSASNotebookRenderer {
                 this.renderText(data, element);
         }
     }
-
-    private renderSASOutput(data: string, element: HTMLElement): void {
+    renderSASOutput(data, element) {
         const div = document.createElement('div');
         div.className = 'sas-output';
         div.style.cssText = `
@@ -51,14 +46,12 @@ export class OSASNotebookRenderer {
             white-space: pre-wrap;
             overflow-x: auto;
         `;
-        
         // Format SAS output with syntax highlighting
         const formattedData = this.formatSASOutput(data);
         div.innerHTML = formattedData;
         element.appendChild(div);
     }
-
-    private renderSASError(data: string, element: HTMLElement): void {
+    renderSASError(data, element) {
         const div = document.createElement('div');
         div.className = 'sas-error';
         div.style.cssText = `
@@ -73,12 +66,10 @@ export class OSASNotebookRenderer {
             white-space: pre-wrap;
             color: #cc0000;
         `;
-        
         div.textContent = data;
         element.appendChild(div);
     }
-
-    private renderDataset(data: any, element: HTMLElement): void {
+    renderDataset(data, element) {
         const div = document.createElement('div');
         div.className = 'sas-dataset';
         div.style.cssText = `
@@ -88,34 +79,28 @@ export class OSASNotebookRenderer {
             padding: 10px;
             font-family: Arial, sans-serif;
         `;
-
         if (data && data.name) {
             const header = document.createElement('h4');
             header.textContent = `Dataset: ${data.name}`;
             header.style.cssText = 'margin: 0 0 10px 0; color: #333;';
             div.appendChild(header);
-
             const info = document.createElement('p');
             info.textContent = `${data.shape[0]} observations, ${data.shape[1]} variables`;
             info.style.cssText = 'margin: 0 0 10px 0; color: #666; font-size: 0.9em;';
             div.appendChild(info);
-
             if (data.head && data.head.length > 0) {
                 const table = this.createDatasetTable(data.head, data.columns);
                 div.appendChild(table);
             }
         }
-
         element.appendChild(div);
     }
-
-    private renderHTML(data: string, element: HTMLElement): void {
+    renderHTML(data, element) {
         const div = document.createElement('div');
         div.innerHTML = data;
         element.appendChild(div);
     }
-
-    private renderText(data: string, element: HTMLElement): void {
+    renderText(data, element) {
         const div = document.createElement('div');
         div.style.cssText = `
             font-family: 'Courier New', monospace;
@@ -127,8 +112,7 @@ export class OSASNotebookRenderer {
         div.textContent = data;
         element.appendChild(div);
     }
-
-    private formatSASOutput(data: string): string {
+    formatSASOutput(data) {
         // Add basic syntax highlighting for SAS output
         return data
             .replace(/ERROR:/g, '<span style="color: #cc0000; font-weight: bold;">ERROR:</span>')
@@ -137,8 +121,7 @@ export class OSASNotebookRenderer {
             .replace(/PROC\s+(\w+)/gi, '<span style="color: #0066cc; font-weight: bold;">PROC $1</span>')
             .replace(/DATA\s+(\w+)/gi, '<span style="color: #0066cc; font-weight: bold;">DATA $1</span>');
     }
-
-    private createDatasetTable(head: any[], columns: string[]): HTMLTableElement {
+    createDatasetTable(head, columns) {
         const table = document.createElement('table');
         table.style.cssText = `
             border-collapse: collapse;
@@ -146,22 +129,18 @@ export class OSASNotebookRenderer {
             font-size: 0.9em;
             margin-top: 10px;
         `;
-
         // Create header
         const thead = document.createElement('thead');
         const headerRow = document.createElement('tr');
         headerRow.style.cssText = 'background-color: #f5f5f5;';
-
         columns.forEach(col => {
             const th = document.createElement('th');
             th.textContent = col;
             th.style.cssText = 'border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold;';
             headerRow.appendChild(th);
         });
-
         thead.appendChild(headerRow);
         table.appendChild(thead);
-
         // Create body
         const tbody = document.createElement('tbody');
         head.forEach(row => {
@@ -174,8 +153,9 @@ export class OSASNotebookRenderer {
             });
             tbody.appendChild(tr);
         });
-
         table.appendChild(tbody);
         return table;
     }
 }
+exports.OSASNotebookRenderer = OSASNotebookRenderer;
+//# sourceMappingURL=renderer.js.map

@@ -1,28 +1,39 @@
+#!/usr/bin/env python3
 """
-Open-SAS Jupyter Kernel Implementation
-
-This module implements a Jupyter kernel for executing SAS code
-in notebook environments.
+Final Working Open-SAS Jupyter Kernel
 """
 
-import json
 import sys
+import os
+import json
 import io
 import traceback
 from contextlib import redirect_stdout, redirect_stderr
-from ipykernel.kernelbase import Kernel
+
+# Add the open_sas package to the path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, current_dir)
+
 from open_sas import SASInterpreter
 
+# Import IPython kernel components
+try:
+    from ipykernel.kernelbase import Kernel
+    from ipykernel.kernelapp import IPKernelApp
+except ImportError:
+    print("Error: ipykernel not installed. Please install it with: pip install ipykernel")
+    sys.exit(1)
 
-class OSASKernel(Kernel):
-    """Jupyter kernel for Open-SAS."""
+
+class FinalOSASKernel(Kernel):
+    """Final working Jupyter kernel for Open-SAS."""
     
     implementation = 'Open-SAS'
     implementation_version = '0.1.0'
     language = 'sas'
     language_version = '9.4'
     language_info = {
-        'name': 'osas',
+        'name': 'sas',
         'mimetype': 'text/x-sas',
         'file_extension': '.osas',
         'pygments_lexer': 'sas',
@@ -182,19 +193,6 @@ class OSASKernel(Kernel):
             'metadata': {}
         }
     
-    def _get_datasets_info(self):
-        """Get information about datasets created in the interpreter."""
-        datasets = {}
-        for name, df in self.interpreter.data_sets.items():
-            datasets[name] = {
-                'shape': df.shape,
-                'columns': df.columns.tolist(),
-                'dtypes': df.dtypes.to_dict(),
-                'head': df.head().to_dict('records') if not df.empty else [],
-                'memory_usage': df.memory_usage(deep=True).sum()
-            }
-        return datasets
-    
     def _get_new_datasets_info(self):
         """Get information about datasets created in the current execution."""
         datasets = {}
@@ -293,4 +291,12 @@ class OSASKernel(Kernel):
         return help_dict.get(word.lower(), None)
 
 
-# Note: The main() function is now in __main__.py to avoid circular imports
+def main():
+    """Main entry point for the kernel."""
+    # Create the kernel app with our custom kernel class
+    app = IPKernelApp(kernel_class=FinalOSASKernel)
+    app.launch_instance()
+
+
+if __name__ == '__main__':
+    main()

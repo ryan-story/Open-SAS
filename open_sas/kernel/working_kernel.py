@@ -1,8 +1,6 @@
+#!/usr/bin/env python3
 """
-Open-SAS Jupyter Kernel Implementation
-
-This module implements a Jupyter kernel for executing SAS code
-in notebook environments.
+Working Open-SAS Jupyter Kernel Implementation
 """
 
 import json
@@ -14,15 +12,15 @@ from ipykernel.kernelbase import Kernel
 from open_sas import SASInterpreter
 
 
-class OSASKernel(Kernel):
-    """Jupyter kernel for Open-SAS."""
+class WorkingOSASKernel(Kernel):
+    """Working Jupyter kernel for Open-SAS."""
     
     implementation = 'Open-SAS'
     implementation_version = '0.1.0'
     language = 'sas'
     language_version = '9.4'
     language_info = {
-        'name': 'osas',
+        'name': 'sas',
         'mimetype': 'text/x-sas',
         'file_extension': '.osas',
         'pygments_lexer': 'sas',
@@ -182,19 +180,6 @@ class OSASKernel(Kernel):
             'metadata': {}
         }
     
-    def _get_datasets_info(self):
-        """Get information about datasets created in the interpreter."""
-        datasets = {}
-        for name, df in self.interpreter.data_sets.items():
-            datasets[name] = {
-                'shape': df.shape,
-                'columns': df.columns.tolist(),
-                'dtypes': df.dtypes.to_dict(),
-                'head': df.head().to_dict('records') if not df.empty else [],
-                'memory_usage': df.memory_usage(deep=True).sum()
-            }
-        return datasets
-    
     def _get_new_datasets_info(self):
         """Get information about datasets created in the current execution."""
         datasets = {}
@@ -293,4 +278,11 @@ class OSASKernel(Kernel):
         return help_dict.get(word.lower(), None)
 
 
-# Note: The main() function is now in __main__.py to avoid circular imports
+def main():
+    """Main entry point for the kernel."""
+    from ipykernel.kernelapp import IPKernelApp
+    IPKernelApp.launch_instance(kernel_class=WorkingOSASKernel)
+
+
+if __name__ == '__main__':
+    main()

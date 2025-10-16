@@ -40,8 +40,7 @@ def install_kernel(user: bool = True, prefix: Optional[str] = None) -> bool:
         kernel_spec = {
             "argv": [
                 sys.executable, 
-                "-m", 
-                "open_sas.kernel", 
+                os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "simple_osas_kernel.py"),
                 "-f", 
                 "{connection_file}"
             ],
