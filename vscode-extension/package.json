@@ -69,6 +69,13 @@
         "language": "sas",
         "scopeName": "source.sas",
         "path": "./syntaxes/sas.tmLanguage.json"
+      },
+      {
+        "scopeName": "source.sas",
+        "path": "./syntaxes/sas.tmLanguage.json",
+        "embeddedLanguages": {
+          "source.sas": "osas"
+        }
       }
     ],
     "snippets": [

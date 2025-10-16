@@ -41,6 +41,8 @@ class OSASKernel(IPythonKernel):
         'file_extension': '.osas',
         'pygments_lexer': 'sas',
         'codemirror_mode': 'sas',
+        'nbconvert_exporter': 'python',
+        'codemirror_mode_name': 'sas',
     }
     banner = "Open-SAS Kernel - SAS alternative with Python backend"
     
