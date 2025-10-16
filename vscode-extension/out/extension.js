@@ -11,7 +11,6 @@ const vscode = require("vscode");
 const child_process_1 = require("child_process");
 const path = require("path");
 const os = require("os");
-const osasNotebookProvider_1 = require("./notebook/osasNotebookProvider");
 let outputChannel;
 let logChannel;
 function activate(context) {
@@ -24,17 +23,9 @@ function activate(context) {
     const runSelectionCommand = vscode.commands.registerCommand('open-sas.runSelection', runSelection);
     const checkSyntaxCommand = vscode.commands.registerCommand('open-sas.checkSyntax', checkSyntax);
     context.subscriptions.push(runFileCommand, runSelectionCommand, checkSyntaxCommand);
-    // Register notebook provider
-    const notebookProvider = new osasNotebookProvider_1.OSASNotebookProvider();
-    const notebookController = vscode.notebooks.createNotebookController('osas-notebook-controller', 'osas-notebook', 'Open-SAS');
-    notebookController.supportedLanguages = ['sas'];
-    notebookController.supportsExecutionOrder = true;
-    notebookController.executeHandler = (cells, notebook, controller) => {
-        for (const cell of cells) {
-            notebookProvider.executeCell(notebook, cell);
-        }
-    };
-    context.subscriptions.push(notebookController);
+    // Note: VS Code notebooks use the Jupyter kernel directly
+    // The Open-SAS kernel is already installed and should be available
+    // in VS Code's kernel selector for .ipynb files
     // Show output channel on first activation
     outputChannel.show();
 }

@@ -19,7 +19,8 @@
     "python"
   ],
   "activationEvents": [
-    "onLanguage:osas"
+    "onLanguage:osas",
+    "onNotebook:jupyter-notebook"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -32,6 +33,17 @@
         ],
         "extensions": [
           ".osas"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "sas",
+        "aliases": [
+          "SAS",
+          "sas"
+        ],
+        "extensions": [
+          ".sas"
         ],
         "configuration": "./language-configuration.json"
       }
@@ -62,6 +74,11 @@
     "grammars": [
       {
         "language": "osas",
+        "scopeName": "source.sas",
+        "path": "./syntaxes/sas.tmLanguage.json"
+      },
+      {
+        "language": "sas",
         "scopeName": "source.sas",
         "path": "./syntaxes/sas.tmLanguage.json"
       }
