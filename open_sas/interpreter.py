@@ -97,11 +97,13 @@ class SASInterpreter:
     
     def _clean_code(self, code: str) -> str:
         """Remove comments and clean up SAS code."""
+        print(f"Cleaning code: {repr(code)}")
         # Remove /* */ comments
         code = re.sub(r'/\*.*?\*/', '', code, flags=re.DOTALL)
         
         # Remove * comments (single line)
         lines = code.split('\n')
+        print(f"Code lines before cleaning: {lines}")
         cleaned_lines = []
         for line in lines:
             # Find * comments that are not part of strings or arithmetic
@@ -120,7 +122,9 @@ class SASInterpreter:
                 line = line[:comment_pos]
             cleaned_lines.append(line)
         
-        return '\n'.join(cleaned_lines)
+        cleaned_code = '\n'.join(cleaned_lines)
+        print(f"Cleaned code: {repr(cleaned_code)}")
+        return cleaned_code
     
     def _split_statements(self, code: str) -> List[str]:
         """Split SAS code into individual statements."""
