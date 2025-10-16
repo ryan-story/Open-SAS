@@ -112,6 +112,9 @@ class DataStepParser:
                     if ';' in next_line:
                         break
                     j += 1
+                # Remove semicolon from the end if present
+                if combined_line.endswith(';'):
+                    combined_line = combined_line[:-1]
                 print(f"Combined line: {combined_line}")
                 combined_lines.append(combined_line)
                 i = j

@@ -170,6 +170,9 @@ class ExpressionEvaluator:
     def _evaluate_arithmetic(self, expression: str, data: pd.DataFrame) -> pd.Series:
         """Evaluate arithmetic expressions."""
         try:
+            # Remove semicolon if present
+            expression = expression.rstrip(';')
+            
             # Replace column names with their values
             result = expression
             for col in data.columns:
@@ -303,10 +306,16 @@ class ExpressionEvaluator:
             
             # Parse IFN expression: ifn(condition, true_value, false_value)
             import re
+            # Try to match complete IFN first
             match = re.match(r'ifn\s*\(\s*([^,]+),\s*([^,]+),\s*([^)]+)\)', expression, re.IGNORECASE)
             if not match:
-                print(f"IFN pattern not matched for: {expression}")
-                return pd.Series([expression] * len(data), index=data.index)
+                # Try to match incomplete IFN (missing closing parenthesis)
+                match = re.match(r'ifn\s*\(\s*([^,]+),\s*([^,]+),\s*(.+)$', expression, re.IGNORECASE)
+                if match:
+                    print(f"IFN pattern matched (incomplete): {expression}")
+                else:
+                    print(f"IFN pattern not matched for: {expression}")
+                    return pd.Series([expression] * len(data), index=data.index)
             
             condition_str, true_value, false_value = match.groups()
             condition_str = condition_str.strip()
