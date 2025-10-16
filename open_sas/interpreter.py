@@ -101,34 +101,14 @@ class SASInterpreter:
         # Remove /* */ comments
         code = re.sub(r'/\*.*?\*/', '', code, flags=re.DOTALL)
         
-        # Remove * comments (single line)
+        # Remove * comments (single line) - only /* comments, not single *
         lines = code.split('\n')
         print(f"Code lines before cleaning: {lines}")
         cleaned_lines = []
         for line in lines:
             print(f"Processing line: {repr(line)}")
-            # Find * comments that are not part of strings or arithmetic
-            # Only treat * as comment if it's at the start of a word (after whitespace)
-            comment_pos = -1
-            for i, char in enumerate(line):
-                if char == '*':
-                    # Check if it's at start of word (preceded by whitespace or at start of line)
-                    # AND not part of arithmetic (not preceded by alphanumeric characters)
-                    if i == 0 or line[i-1].isspace():
-                        # Additional check: make sure it's not part of arithmetic
-                        # Look at the character before the * to see if it's part of a variable name
-                        if i > 0 and line[i-1].isalnum():
-                            # This is part of arithmetic, not a comment
-                            continue
-                        # Check if it's not in a string
-                        before_comment = line[:i]
-                        if before_comment.count("'") % 2 == 0 and before_comment.count('"') % 2 == 0:
-                            comment_pos = i
-                            print(f"Found comment at position {i} in line: {repr(line)}")
-                            break
-            if comment_pos != -1:
-                line = line[:comment_pos]
-                print(f"Trimmed line to: {repr(line)}")
+            # Only remove /* */ comments, not single * comments
+            # This prevents arithmetic operations like salary * 0.1 from being treated as comments
             cleaned_lines.append(line)
         
         cleaned_code = '\n'.join(cleaned_lines)
@@ -282,8 +262,7 @@ class SASInterpreter:
                             loaded_data = self.libname_manager.load_dataset(libname, lib_dataset_name)
                             if loaded_data is not None:
                                 input_data = loaded_data.copy()
-                                # Also store in memory for future use
-                                self.data_sets[dataset_name] = input_data
+                                # Don't store the copy back - keep the original dataset intact
                             else:
                                 print(f"ERROR: Dataset {dataset_name} not found in library {libname}")
                                 return
