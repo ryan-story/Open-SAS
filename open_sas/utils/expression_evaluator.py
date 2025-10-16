@@ -331,8 +331,12 @@ class ExpressionEvaluator:
             # Handle nested IFN in false_value
             if 'ifn(' in false_value.lower():
                 print("Handling nested IFN")
-                # Parse nested IFN
+                # Parse nested IFN - try different patterns
                 nested_match = re.match(r'ifn\s*\(\s*([^,]+),\s*([^,]+),\s*([^)]+)\)', false_value, re.IGNORECASE)
+                if not nested_match:
+                    # Try without closing parenthesis
+                    nested_match = re.match(r'ifn\s*\(\s*([^,]+),\s*([^,]+),\s*(.+)$', false_value, re.IGNORECASE)
+                
                 if nested_match:
                     cond2, val2, val3 = nested_match.groups()
                     cond2 = cond2.strip()
