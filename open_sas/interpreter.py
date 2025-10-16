@@ -104,13 +104,20 @@ class SASInterpreter:
         lines = code.split('\n')
         cleaned_lines = []
         for line in lines:
-            # Find * comments that are not part of strings
-            comment_pos = line.find('*')
+            # Find * comments that are not part of strings or arithmetic
+            # Only treat * as comment if it's at the start of a word (after whitespace)
+            comment_pos = -1
+            for i, char in enumerate(line):
+                if char == '*':
+                    # Check if it's at start of word (preceded by whitespace or at start of line)
+                    if i == 0 or line[i-1].isspace():
+                        # Check if it's not in a string
+                        before_comment = line[:i]
+                        if before_comment.count("'") % 2 == 0 and before_comment.count('"') % 2 == 0:
+                            comment_pos = i
+                            break
             if comment_pos != -1:
-                # Check if it's not in a string
-                before_comment = line[:comment_pos]
-                if before_comment.count("'") % 2 == 0 and before_comment.count('"') % 2 == 0:
-                    line = line[:comment_pos]
+                line = line[:comment_pos]
             cleaned_lines.append(line)
         
         return '\n'.join(cleaned_lines)
