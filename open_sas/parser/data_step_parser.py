@@ -82,6 +82,7 @@ class DataStepParser:
         by_vars = []
         
         # First pass: combine multi-line assignments
+        print(f"Starting multi-line parsing with {len(lines)} lines")
         combined_lines = []
         i = 0
         while i < len(lines):
