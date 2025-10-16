@@ -60,14 +60,14 @@ class ExpressionEvaluator:
         expression = match.group(2).strip()
         
         try:
-            print(f"Evaluating assignment: {var_name} = {expression}")
+            # Debug: Evaluating assignment
             # Make sure we're working with a copy to avoid modifying the original
             if not hasattr(data, '_is_copy'):
                 data = data.copy()
                 data._is_copy = True
             # Evaluate the expression for each row
             result = self._evaluate_expression(expression, data)
-            print(f"Result type: {type(result)}, length: {len(result) if hasattr(result, '__len__') else 'N/A'}")
+            # Debug: Result type and length
             data[var_name] = result
             return data
         except Exception as e:
@@ -141,7 +141,7 @@ class ExpressionEvaluator:
         Returns:
             Series with evaluated results
         """
-        print(f"Evaluating expression: {expression}")
+        # Debug: Evaluating expression
         
         # Handle IFN functions first (they can contain complex expressions)
         if 'ifn(' in expression.lower():
@@ -176,7 +176,7 @@ class ExpressionEvaluator:
         try:
             # Remove semicolon if present
             expression = expression.rstrip(';')
-            print(f"Evaluating arithmetic: {expression}")
+            # Debug: Evaluating arithmetic
             
             # Replace column names with their values
             result = expression
@@ -185,11 +185,11 @@ class ExpressionEvaluator:
                     # Replace column references with actual values
                     result = result.replace(col, f"data['{col}']")
             
-            print(f"Arithmetic expression after column replacement: {result}")
+            # Debug: Arithmetic expression after column replacement
             
             # Evaluate the expression
             evaluated_result = eval(result)
-            print(f"Arithmetic result: {evaluated_result}")
+            # Debug: Arithmetic result
             return evaluated_result
         except Exception as e:
             print(f"Error evaluating arithmetic expression '{expression}': {e}")

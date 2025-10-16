@@ -43,6 +43,7 @@ class ProcParser:
         proc_name = None
         data_option = None
         output_option = None
+        options = {}
         
         for line in lines:
             line = line.strip()
@@ -60,9 +61,17 @@ class ProcParser:
                         data_option = data_match.group(1)
                         
                     # Parse OUT= option
-                    out_match = re.search(r'out\s*=\s*(\w+)', options_str, re.IGNORECASE)
+                    out_match = re.search(r'out\s*=\s*([\w.]+)', options_str, re.IGNORECASE)
                     if out_match:
                         output_option = out_match.group(1)
+                    
+                    # Parse NOPRINT option
+                    if re.search(r'\bnoprint\b', options_str, re.IGNORECASE):
+                        options['noprint'] = True
+                    
+                    # Parse NOPRINT option
+                    if re.search(r'\bnoprint\b', options_str, re.IGNORECASE):
+                        options['noprint'] = True
                 break
         
         # If no PROC line found, try to parse the first line as a combined PROC statement
@@ -82,16 +91,19 @@ class ProcParser:
                         data_option = data_match.group(1)
                         
                     # Parse OUT= option
-                    out_match = re.search(r'out\s*=\s*(\w+)', options_str, re.IGNORECASE)
+                    out_match = re.search(r'out\s*=\s*([\w.]+)', options_str, re.IGNORECASE)
                     if out_match:
                         output_option = out_match.group(1)
+                    
+                    # Parse NOPRINT option
+                    if re.search(r'\bnoprint\b', options_str, re.IGNORECASE):
+                        options['noprint'] = True
         
         if not proc_line:
             raise ValueError("No PROC statement found")
             
         # Parse remaining statements
         statements = []
-        options = {}
         
         # Check if the PROC line contains additional statements
         if proc_line:
@@ -107,7 +119,7 @@ class ProcParser:
                 if where_match:
                     options['where'] = where_match.group(1).strip()
         
-        for line in lines:
+        for i, line in enumerate(lines):
             line = line.strip()
             if not line or line.upper().startswith('PROC '):
                 continue
@@ -130,7 +142,44 @@ class ProcParser:
             elif line.upper().startswith('BY '):
                 by_match = re.match(r'by\s+(.+?)(?:\s*;)?$', line, re.IGNORECASE)
                 if by_match:
-                    options['by'] = [v.strip() for v in by_match.group(1).split()]
+                    by_content = by_match.group(1).strip()
+                    # Parse BY variables with ascending/descending modifiers
+                    by_vars = []
+                    by_ascending = []
+                    
+                    # Split by spaces and process each token
+                    tokens = by_content.split()
+                    i = 0
+                    while i < len(tokens):
+                        token = tokens[i].strip()
+                        if token.upper() == 'DESCENDING':
+                            # Next token should be the variable name
+                            if i + 1 < len(tokens):
+                                var_name = tokens[i + 1].strip()
+                                by_vars.append(var_name)
+                                by_ascending.append(False)  # False = descending
+                                i += 2  # Skip both 'descending' and variable name
+                            else:
+                                # Malformed BY statement
+                                break
+                        elif token.upper() == 'ASCENDING':
+                            # Next token should be the variable name
+                            if i + 1 < len(tokens):
+                                var_name = tokens[i + 1].strip()
+                                by_vars.append(var_name)
+                                by_ascending.append(True)  # True = ascending
+                                i += 2  # Skip both 'ascending' and variable name
+                            else:
+                                # Malformed BY statement
+                                break
+                        else:
+                            # Regular variable name (default ascending)
+                            by_vars.append(token)
+                            by_ascending.append(True)  # Default ascending
+                            i += 1
+                    
+                    options['by'] = by_vars
+                    options['by_ascending'] = by_ascending
                     
             elif line.upper().startswith('CLASS '):
                 class_match = re.match(r'class\s+(.+?)(?:\s*;)?$', line, re.IGNORECASE)
@@ -148,18 +197,40 @@ class ProcParser:
                     options['model'] = model_match.group(1).strip()
                     
             elif line.upper().startswith('OUTPUT '):
+                # Handle multi-line OUTPUT statement
+                output_content = []
                 output_match = re.match(r'output\s+(.+?)(?:\s*;)?$', line, re.IGNORECASE)
                 if output_match:
-                    options['output'] = output_match.group(1).strip()
+                    output_content.append(output_match.group(1).strip())
+                
+                # Look ahead for continuation lines (until we hit a semicolon or next statement)
+                j = i + 1
+                while j < len(lines):
+                    next_line = lines[j].strip()
+                    if not next_line or next_line.startswith('*') or next_line.startswith('/*'):
+                        j += 1
+                        continue
+                    if next_line.upper().startswith(('PROC ', 'DATA ', 'RUN', 'QUIT')):
+                        break
+                    if ';' in next_line:
+                        # This line ends the OUTPUT statement
+                        output_content.append(next_line.rstrip(';').strip())
+                        break
+                    else:
+                        # Continuation line
+                        output_content.append(next_line.strip())
+                        j += 1
+                
+                # Join all OUTPUT content
+                full_output = ' '.join(output_content)
+                options['output'] = full_output
                     
             elif line.upper().startswith('WHERE '):
                 where_match = re.match(r'where\s+(.+?)(?:\s*;)?$', line, re.IGNORECASE)
                 if where_match:
                     options['where'] = where_match.group(1).strip()
         
-        # Debug: Print parsed options
-        print(f"Parsed PROC options: {options}")
-        print(f"Parsed statements: {statements}")
+        # Debug: Parsed options and statements are available
         
         return ProcStatement(
             proc_name=proc_name,

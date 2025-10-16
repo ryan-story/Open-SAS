@@ -15,13 +15,12 @@ from contextlib import redirect_stdout, redirect_stderr
 from ipykernel.ipkernel import IPythonKernel
 from open_sas import SASInterpreter
 
-# Set up debug logging
+# Set up logging (WARNING level to suppress INFO messages)
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.WARNING,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('/tmp/osas_kernel_debug.log'),
-        logging.StreamHandler(sys.stderr)
+        logging.FileHandler('/tmp/osas_kernel_debug.log')
     ]
 )
 logger = logging.getLogger('OSASKernel')
@@ -109,8 +108,8 @@ class OSASKernel(IPythonKernel):
         self.error_buffer = io.StringIO()
         
         # Record datasets before execution
-        self.datasets_before_execution = set(self.interpreter.data_sets.keys())
-        logger.info(f"Datasets before execution: {self.datasets_before_execution}")
+        datasets_before = set(self.interpreter.data_sets.keys())
+        logger.info(f"Datasets before execution: {datasets_before}")
         
         try:
             logger.info("Starting SAS code execution")
@@ -141,10 +140,16 @@ class OSASKernel(IPythonKernel):
                 })
             
             # Get datasets created in this execution
-            datasets = self._get_new_datasets_info()
+            datasets = self._get_new_datasets_info(datasets_before)
             if datasets and not silent:
-                logger.info(f"Sending dataset display for: {list(datasets.keys())}")
-                self._send_datasets_display(datasets)
+                # Check if any PROC suppressed dataset display
+                suppress_display = getattr(self.interpreter, '_suppress_dataset_display', False)
+                if not suppress_display:
+                    logger.info(f"Sending dataset display for: {list(datasets.keys())}")
+                    self._send_datasets_display(datasets)
+                else:
+                    # Reset the flag for next execution
+                    self.interpreter._suppress_dataset_display = False
             
             logger.info("Returning successful execution result")
             return {
@@ -254,15 +259,15 @@ class OSASKernel(IPythonKernel):
             }
         return datasets
     
-    def _get_new_datasets_info(self):
+    def _get_new_datasets_info(self, datasets_before):
         """Get information about datasets created in the current execution."""
         datasets = {}
         current_datasets = set(self.interpreter.data_sets.keys())
-        new_datasets = current_datasets - self.datasets_before_execution
+        new_datasets = current_datasets - datasets_before
         
-        print(f"Datasets before execution: {self.datasets_before_execution}")
-        print(f"Current datasets: {current_datasets}")
-        print(f"New datasets: {new_datasets}")
+        logger.info(f"Datasets before execution: {datasets_before}")
+        logger.info(f"Current datasets: {current_datasets}")
+        logger.info(f"New datasets: {new_datasets}")
         
         for name in new_datasets:
             df = self.interpreter.data_sets[name]

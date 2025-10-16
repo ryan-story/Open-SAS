@@ -106,9 +106,8 @@ class SASInterpreter:
     
     def _split_statements(self, code: str) -> List[str]:
         """Split SAS code into individual statements."""
-        print(f"Splitting code: {repr(code)}")
+        # Debug: Code splitting
         lines = code.split('\n')
-        print(f"Code lines: {lines}")
         statements = []
         current_statement = ""
         in_datalines = False
@@ -207,7 +206,7 @@ class SASInterpreter:
     
     def _execute_data_step(self, statement: str) -> None:
         """Execute a DATA step."""
-        print(f"Executing DATA step: {statement}")
+        # Debug: Executing DATA step
         
         try:
             # Check if this is a complete DATA step with DATALINES
@@ -266,14 +265,14 @@ class SASInterpreter:
                 if input_data is not None:
                     # Apply WHERE conditions
                     for where_condition in data_info.where_conditions:
-                        print(f"Applying WHERE condition: {where_condition}")
+                        # Debug: Applying WHERE condition
                         input_data = self.data_utils.apply_where_condition(
                             input_data, where_condition, self.expression_parser
                         )
                     
                     # Apply variable assignments
                     for assignment in data_info.variable_assignments:
-                        print(f"Processing assignment: {assignment}")
+                        # Debug: Processing assignment
                         if assignment.lower().startswith('if '):
                             # Handle IF/THEN/ELSE statements
                             input_data = self.expression_evaluator.evaluate_if_then_else(assignment, input_data)
@@ -301,7 +300,7 @@ class SASInterpreter:
                         if self.libname_manager.save_dataset(libname, dataset_name, input_data):
                             print(f"Saved dataset {data_info.output_dataset} to library {libname}")
                     
-                    print(f"Created dataset: {data_info.output_dataset} with {len(input_data)} observations")
+                    # Debug: Created dataset
             
         except Exception as e:
             print(f"ERROR in DATA step: {e}")
@@ -310,7 +309,7 @@ class SASInterpreter:
     
     def _execute_proc(self, statement: str) -> None:
         """Execute a PROC procedure."""
-        print(f"Executing PROC: {statement}")
+        # Debug: Executing PROC
         
         try:
             # Parse the PROC statement
@@ -357,12 +356,22 @@ class SASInterpreter:
                 for line in results.get('output_text', []):
                     print(line)
                 
+                # Check if dataset display should be suppressed
+                if results.get('suppress_dataset_display', False):
+                    self._suppress_dataset_display = True
+                
                 # Store output data if created
                 if results.get('output_data') is not None:
                     if proc_info.output_option:
+                        # OUT= specified: create new dataset
                         self.data_sets[proc_info.output_option] = results['output_data']
                     elif results.get('output_dataset'):
+                        # Output dataset specified in results
                         self.data_sets[results['output_dataset']] = results['output_data']
+                    elif results.get('overwrite_input', False):
+                        # No OUT= specified: overwrite input dataset (for PROC SORT)
+                        if proc_info.data_option:
+                            self.data_sets[proc_info.data_option] = results['output_data']
             else:
                 print(f"ERROR: PROC {proc_info.proc_name} not implemented")
                 
@@ -371,7 +380,7 @@ class SASInterpreter:
     
     def _execute_libname(self, statement: str) -> None:
         """Execute a LIBNAME statement."""
-        print(f"Executing LIBNAME: {statement}")
+        # Debug: Executing LIBNAME
         try:
             result = self.libname_manager.parse_libname_statement(statement)
             if result:
@@ -387,7 +396,7 @@ class SASInterpreter:
     
     def _execute_let(self, statement: str) -> None:
         """Execute a %LET macro statement."""
-        print(f"Executing %LET: {statement}")
+        # Debug: Executing %LET
         try:
             var_name, value = self.macro_parser.parse_let_statement(statement)
             self.macro_parser.macro_variables[var_name] = value

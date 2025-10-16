@@ -82,18 +82,8 @@ class DataStepParser:
         by_vars = []
         
         # First pass: combine multi-line assignments
-        print(f"Starting multi-line parsing with {len(lines)} lines")
-        print(f"Input lines: {lines}")
-        
         # Simple approach: join all lines and then split by semicolons
         full_text = ' '.join(lines)
-        print(f"Full text: {full_text}")
-        
-        # Check if the full text contains the arithmetic operation
-        if '* 0.1' in full_text:
-            print("✅ Full text contains '* 0.1'")
-        else:
-            print("❌ Full text does NOT contain '* 0.1'")
         
         # Find the DATA step content (between DATA and RUN)
         data_start = full_text.upper().find('DATA ')
@@ -107,27 +97,21 @@ class DataStepParser:
             raise ValueError("No RUN statement found")
         
         data_content = full_text[content_start:run_pos].strip()
-        print(f"Data content: {data_content}")
-        
         # Split by semicolons to get individual statements
         statements = [stmt.strip() for stmt in data_content.split(';') if stmt.strip()]
-        print(f"Statements: {statements}")
         
         # Further split statements that contain multiple assignments
         final_statements = []
         for stmt in statements:
             # Check if statement contains multiple assignments (multiple '=' signs)
             if stmt.count('=') > 1:
-                print(f"Splitting multi-assignment statement: {stmt}")
                 # Split by '=' and reconstruct assignments
                 parts = stmt.split('=')
-                print(f"Parts: {parts}")
                 if len(parts) >= 3:
                     # First assignment
                     first_var = parts[0].strip()
                     first_value = parts[1].strip()
                     final_statements.append(f"{first_var} = {first_value}")
-                    print(f"First assignment: {first_var} = {first_value}")
                     
                     # Remaining assignments
                     for i in range(2, len(parts)):
@@ -135,13 +119,10 @@ class DataStepParser:
                             var = parts[i].strip()
                             value = parts[i + 1].strip()
                             final_statements.append(f"{var} = {value}")
-                            print(f"Additional assignment: {var} = {value}")
                 else:
                     final_statements.append(stmt)
             else:
                 final_statements.append(stmt)
-        
-        print(f"Final statements: {final_statements}")
         combined_lines = final_statements
         
         # Second pass: parse the combined lines
@@ -204,8 +185,7 @@ class DataStepParser:
                     vars_list = [v.strip() for v in by_match.group(1).split()]
                     by_vars.extend(vars_list)
         
-        # Debug: Print parsed assignments
-        print(f"Parsed variable assignments: {variable_assignments}")
+        # Debug: Parsed assignments are available in variable_assignments
         
         return DataStepInfo(
             output_dataset=output_dataset,

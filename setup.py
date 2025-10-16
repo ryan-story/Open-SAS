@@ -12,7 +12,7 @@ setup(
     version="0.1.0",
     author="Ryan Story",
     author_email="ryan@stryve.com",
-    description="Python-based SAS interpreter with VS Code extension support",
+    description="Python-based SAS interpreter with Jupyter notebook support",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ryan-story/Open-SAS",

@@ -38,8 +38,21 @@ class ProcSort:
             results['output_text'].append("ERROR: BY statement required for PROC SORT.")
             return results
         
+        # Get ascending/descending information
+        by_ascending = proc_info.options.get('by_ascending', [True] * len(by_vars))
+        
+        # Ensure by_ascending has the same length as by_vars
+        if len(by_ascending) != len(by_vars):
+            by_ascending = [True] * len(by_vars)
+        
         # Filter to only include variables that exist in the data
-        valid_by_vars = [var for var in by_vars if var in data.columns]
+        valid_by_vars = []
+        valid_ascending = []
+        for i, var in enumerate(by_vars):
+            if var in data.columns:
+                valid_by_vars.append(var)
+                valid_ascending.append(by_ascending[i])
+        
         if not valid_by_vars:
             results['output_text'].append("ERROR: No valid BY variables found in data.")
             return results
@@ -47,8 +60,8 @@ class ProcSort:
         # Check for NODUPKEY option
         nodupkey = proc_info.options.get('nodupkey', False)
         
-        # Sort the data
-        sorted_data = data.sort_values(by=valid_by_vars)
+        # Sort the data with proper ascending/descending order
+        sorted_data = data.sort_values(by=valid_by_vars, ascending=valid_ascending)
         
         # Handle NODUPKEY option
         if nodupkey:
@@ -59,15 +72,27 @@ class ProcSort:
             results['output_text'].append("PROC SORT - Dataset Sorted")
         
         results['output_text'].append("=" * 50)
-        results['output_text'].append(f"BY Variables: {', '.join(valid_by_vars)}")
+        
+        # Create sort order description
+        sort_order_desc = []
+        for i, var in enumerate(valid_by_vars):
+            order = "DESC" if not valid_ascending[i] else "ASC"
+            sort_order_desc.append(f"{var} ({order})")
+        
+        results['output_text'].append(f"BY Variables: {', '.join(sort_order_desc)}")
         results['output_text'].append(f"Observations: {len(sorted_data)}")
         results['output_text'].append("")
         
-        # Set output data
-        results['output_data'] = sorted_data
-        
-        # Set output dataset name if specified
+        # Handle dataset output behavior
         if proc_info.output_option:
+            # OUT= specified: preserve input dataset, create new sorted dataset
+            results['output_data'] = sorted_data
             results['output_dataset'] = proc_info.output_option
+            results['overwrite_input'] = False
+        else:
+            # No OUT= specified: overwrite input dataset with sorted data
+            results['output_data'] = sorted_data
+            results['overwrite_input'] = True
+            # The input dataset name will be determined by the interpreter
         
         return results
