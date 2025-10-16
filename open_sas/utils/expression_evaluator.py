@@ -356,6 +356,13 @@ class ExpressionEvaluator:
                     
                     print(f"Final IFN result: {result}")
                     return result
+                else:
+                    print(f"Could not parse nested IFN: {false_value}")
+                    # Fall back to simple IFN
+                    result = pd.Series(index=data.index, dtype=object)
+                    result[condition_result] = true_value
+                    result[~condition_result] = false_value
+                    return result
             
             # Simple IFN case
             result = pd.Series(index=data.index, dtype=object)
