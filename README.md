@@ -88,9 +88,12 @@ run;
 ```
 
 ### 2. Jupyter Notebook Usage
-1. Install the Open-SAS kernel (see Installation)
-2. Create a new Jupyter notebook
-3. Select "Open-SAS" as the kernel
+1. Install the Open-SAS kernel:
+   ```bash
+   python -m open_sas.kernel install
+   ```
+2. Create a new Jupyter notebook (`.ipynb`)
+3. Select "osas" as the kernel
 4. Write SAS code in cells and execute
 
 ### 3. Command Line Usage

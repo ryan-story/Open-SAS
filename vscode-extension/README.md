@@ -10,7 +10,7 @@
 - **Syntax Highlighting**: Full SAS syntax highlighting for `.osas` and `.sas` files
 - **Code Snippets**: Common SAS patterns and procedures
 - **File Execution**: Run Open-SAS files directly from VS Code
-- **Notebook Support**: Interactive SAS notebooks with `.osasnb` files
+- **Notebook Support**: Interactive SAS notebooks (both `.ipynb` with osas kernel and `.osasnb` files)
 - **IntelliSense**: Code completion and syntax checking
 - **Integrated Terminal**: View results in VS Code's integrated terminal
 
@@ -34,7 +34,14 @@
 3. Use `Ctrl+Shift+P` → "Open-SAS: Run File" to execute
 4. View results in the integrated terminal
 
-### Interactive Notebooks (.osasnb)
+### Interactive Notebooks
+**Option 1: Standard Jupyter Notebooks (.ipynb)**
+1. Install the Open-SAS kernel: `python -m open_sas.kernel install`
+2. Create a new Jupyter notebook (`.ipynb`)
+3. Select "osas" as the kernel
+4. Write SAS code in cells and execute
+
+**Option 2: Open-SAS Notebooks (.osasnb)**
 1. Create a new file with `.osasnb` extension
 2. Write SAS code in cells
 3. Execute cells individually or run all
