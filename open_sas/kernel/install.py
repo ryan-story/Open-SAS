@@ -46,7 +46,7 @@ def install_kernel(user: bool = True, prefix: Optional[str] = None) -> bool:
                 "{connection_file}"
             ],
             "display_name": "Open-SAS",
-            "language": "sas",
+            "language": "osas",
             "mimetype": "text/x-sas",
             "file_extension": ".osas",
             "codemirror_mode": "sas",
