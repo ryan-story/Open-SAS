@@ -112,13 +112,16 @@ class DataStepParser:
         for stmt in statements:
             # Check if statement contains multiple assignments (multiple '=' signs)
             if stmt.count('=') > 1:
+                print(f"Splitting multi-assignment statement: {stmt}")
                 # Split by '=' and reconstruct assignments
                 parts = stmt.split('=')
+                print(f"Parts: {parts}")
                 if len(parts) >= 3:
                     # First assignment
                     first_var = parts[0].strip()
                     first_value = parts[1].strip()
                     final_statements.append(f"{first_var} = {first_value}")
+                    print(f"First assignment: {first_var} = {first_value}")
                     
                     # Remaining assignments
                     for i in range(2, len(parts)):
@@ -126,6 +129,7 @@ class DataStepParser:
                             var = parts[i].strip()
                             value = parts[i + 1].strip()
                             final_statements.append(f"{var} = {value}")
+                            print(f"Additional assignment: {var} = {value}")
                 else:
                     final_statements.append(stmt)
             else:
