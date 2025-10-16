@@ -9,9 +9,22 @@ import json
 import sys
 import io
 import traceback
+import logging
+import os
 from contextlib import redirect_stdout, redirect_stderr
 from ipykernel.ipkernel import IPythonKernel
 from open_sas import SASInterpreter
+
+# Set up debug logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('/tmp/osas_kernel_debug.log'),
+        logging.StreamHandler(sys.stderr)
+    ]
+)
+logger = logging.getLogger('OSASKernel')
 
 
 class OSASKernel(IPythonKernel):
@@ -19,10 +32,10 @@ class OSASKernel(IPythonKernel):
     
     implementation = 'open_sas'
     implementation_version = '0.1.0'
-    language = 'sas'
+    language = 'osas'
     language_version = '9.4'
     language_info = {
-        'name': 'sas',
+        'name': 'osas',
         'version': '9.4',
         'mimetype': 'text/x-sas',
         'file_extension': '.osas',
@@ -32,22 +45,30 @@ class OSASKernel(IPythonKernel):
     banner = "Open-SAS Kernel - SAS alternative with Python backend"
     
     def __init__(self, **kwargs):
+        logger.info(f"OSASKernel initializing... CWD: {os.getcwd()}")
         super().__init__(**kwargs)
         try:
             self.interpreter = SASInterpreter()
             self.output_buffer = io.StringIO()
             self.error_buffer = io.StringIO()
             self.datasets_before_execution = set()
+            logger.info("OSASKernel initialized successfully")
         except Exception as e:
             # Log the error but don't fail initialization
+            logger.error(f"Failed to initialize SAS interpreter: {e}")
             print(f"Warning: Failed to initialize SAS interpreter: {e}")
             self.interpreter = None
     
     def do_execute(self, code, silent, store_history=True, user_expressions=None, allow_stdin=False):
         """Execute SAS code in the kernel."""
         
+        logger.info(f"do_execute called with code: {repr(code[:100])}...")
+        logger.info(f"silent={silent}, store_history={store_history}, allow_stdin={allow_stdin}")
+        logger.info(f"execution_count: {self.execution_count}")
+        
         # Skip empty cells
         if not code.strip():
+            logger.info("Empty cell detected, returning ok status")
             return {
                 'status': 'ok',
                 'execution_count': self.execution_count,
@@ -57,12 +78,15 @@ class OSASKernel(IPythonKernel):
         
         # Check if interpreter is available
         if self.interpreter is None:
+            logger.warning("Interpreter is None, attempting to initialize")
             try:
                 self.interpreter = SASInterpreter()
                 self.output_buffer = io.StringIO()
                 self.error_buffer = io.StringIO()
+                logger.info("Interpreter initialized successfully")
             except Exception as e:
                 error_msg = f"Failed to initialize SAS interpreter: {e}"
+                logger.error(error_msg)
                 if not silent:
                     self.send_response(self.iopub_socket, 'stream', {
                         'name': 'stderr',
@@ -82,8 +106,10 @@ class OSASKernel(IPythonKernel):
         
         # Record datasets before execution
         self.datasets_before_execution = set(self.interpreter.data_sets.keys())
+        logger.info(f"Datasets before execution: {self.datasets_before_execution}")
         
         try:
+            logger.info("Starting SAS code execution")
             # Execute SAS code and capture output
             with redirect_stdout(self.output_buffer), redirect_stderr(self.error_buffer):
                 result = self.interpreter.run_code(code)
@@ -91,9 +117,11 @@ class OSASKernel(IPythonKernel):
             # Get output and errors
             output = self.output_buffer.getvalue()
             errors = self.error_buffer.getvalue()
+            logger.info(f"SAS execution completed. Output length: {len(output)}, Errors length: {len(errors)}")
             
             # Send output to notebook
             if output and not silent:
+                logger.info(f"Sending stdout output: {repr(output[:100])}...")
                 self.send_response(self.iopub_socket, 'stream', {
                     'name': 'stdout',
                     'text': output
@@ -101,6 +129,7 @@ class OSASKernel(IPythonKernel):
             
             # Send errors to notebook
             if errors and not silent:
+                logger.info(f"Sending stderr output: {repr(errors[:100])}...")
                 self.send_response(self.iopub_socket, 'stream', {
                     'name': 'stderr',
                     'text': errors
@@ -109,8 +138,10 @@ class OSASKernel(IPythonKernel):
             # Get datasets created in this execution
             datasets = self._get_new_datasets_info()
             if datasets and not silent:
+                logger.info(f"Sending dataset display for: {list(datasets.keys())}")
                 self._send_datasets_display(datasets)
             
+            logger.info("Returning successful execution result")
             return {
                 'status': 'ok',
                 'execution_count': self.execution_count,
@@ -119,6 +150,9 @@ class OSASKernel(IPythonKernel):
             }
             
         except Exception as e:
+            logger.error(f"Exception during SAS execution: {e}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            
             # Send error to notebook
             if not silent:
                 error_content = {
@@ -128,6 +162,7 @@ class OSASKernel(IPythonKernel):
                 }
                 self.send_response(self.iopub_socket, 'error', error_content)
             
+            logger.info("Returning error execution result")
             return {
                 'status': 'error',
                 'execution_count': self.execution_count,
@@ -237,6 +272,7 @@ class OSASKernel(IPythonKernel):
             # Create HTML display for dataset
             html = self._create_dataset_html(name, info)
             
+            # Use standard HTML display instead of custom renderer
             self.send_response(self.iopub_socket, 'display_data', {
                 'data': {
                     'text/html': html,
