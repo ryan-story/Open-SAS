@@ -133,11 +133,8 @@ class SASInterpreter:
                     current_statement = ""
                     in_data_step = False
                     in_datalines = False
-                # Don't end PROC statement at semicolon, wait for RUN
-                if line.endswith(';'):
-                    current_statement = line[:-1]  # Remove semicolon
-                else:
-                    current_statement = line
+                # Start new PROC statement
+                current_statement = line
                 continue
             elif line.upper() == 'RUN;':
                 if current_statement.strip():
@@ -146,6 +143,10 @@ class SASInterpreter:
                     current_statement = ""
                     in_data_step = False
                     in_datalines = False
+                continue
+            elif current_statement.upper().startswith('PROC '):
+                # Add intermediate PROC statements to current statement
+                current_statement += '\n' + line
                 continue
                 
             # Check for DATALINES/CARDS
