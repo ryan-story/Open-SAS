@@ -36,6 +36,29 @@
         "configuration": "./language-configuration.json"
       }
     ],
+    "notebooks": [
+      {
+        "type": "osas-notebook",
+        "displayName": "Open-SAS Notebook",
+        "selector": [
+          {
+            "filenamePattern": "*.osasnb"
+          }
+        ]
+      }
+    ],
+    "notebookRenderer": [
+      {
+        "id": "osas-renderer",
+        "displayName": "Open-SAS Output Renderer",
+        "entrypoint": "./out/notebook/renderer.js",
+        "mimeTypes": [
+          "text/x-sas-output",
+          "application/vnd.sas.dataset",
+          "text/html"
+        ]
+      }
+    ],
     "grammars": [
       {
         "language": "osas",

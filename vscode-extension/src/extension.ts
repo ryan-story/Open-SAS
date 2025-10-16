@@ -9,6 +9,7 @@ import * as vscode from 'vscode';
 import { spawn, ChildProcess } from 'child_process';
 import * as path from 'path';
 import * as os from 'os';
+import { OSASNotebookProvider } from './notebook/osasNotebookProvider';
 
 let outputChannel: vscode.OutputChannel;
 let logChannel: vscode.OutputChannel;
@@ -26,6 +27,11 @@ export function activate(context: vscode.ExtensionContext) {
     const checkSyntaxCommand = vscode.commands.registerCommand('open-sas.checkSyntax', checkSyntax);
     
     context.subscriptions.push(runFileCommand, runSelectionCommand, checkSyntaxCommand);
+    
+    // Register notebook provider
+    const notebookProvider = new OSASNotebookProvider();
+    const notebookDisposable = vscode.notebook.registerNotebookProvider('osas-notebook', notebookProvider);
+    context.subscriptions.push(notebookDisposable);
     
     // Show output channel on first activation
     outputChannel.show();

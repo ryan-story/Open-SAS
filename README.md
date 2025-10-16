@@ -25,6 +25,7 @@ Open-SAS bridges the gap between SAS and Python by providing:
 - Error detection and reporting
 - Integrated terminal for execution
 - Code snippets for common SAS patterns
+- **Notebook support** for interactive analysis
 
 ### Supported SAS Features
 - **DATA Steps**: Variable creation, conditional logic, loops
@@ -75,6 +76,12 @@ interpreter.run_file('example.osas')
 - Open `.osas` file in VS Code
 - Use `Ctrl+Shift+P` → "Open-SAS: Run File"
 - View results in integrated terminal
+
+### 4. Or use Interactive Notebooks
+- Install with notebook support: `pip install open-sas[notebook]`
+- Install kernel: `python -m open_sas.kernel install`
+- Create Jupyter notebook with Open-SAS kernel
+- Or create `.osasnb` file in VS Code
 
 ## Project Structure
 

@@ -1,0 +1,290 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# Interactive SAS Analysis with Open-SAS\n",
+        "\n",
+        "This notebook demonstrates interactive data analysis using Open-SAS.\n",
+        "Each cell can be run independently to see immediate results.\n",
+        "\n",
+        "## Features Demonstrated:\n",
+        "- Data creation and manipulation\n",
+        "- Statistical analysis with PROC procedures\n",
+        "- Data filtering and subsetting\n",
+        "- Macro variable usage\n",
+        "- Cross-library operations\n",
+        "- Rich output display"
+      ],
+      "metadata": {}
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## Step 1: Create Sample Data\n",
+        "\n",
+        "Let's start by creating a sample dataset with customer information."
+      ],
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Create customer dataset */\n",
+        "data work.customers;\n",
+        "    input customer_id name $ age region $ income;\n",
+        "    datalines;\n",
+        "1 John 35 North 75000\n",
+        "2 Mary 28 South 65000\n",
+        "3 Bob 42 East 85000\n",
+        "4 Alice 31 West 70000\n",
+        "5 Charlie 29 North 60000\n",
+        "6 Diana 38 South 80000\n",
+        "7 Edward 45 East 90000\n",
+        "8 Fiona 26 West 55000\n",
+        "9 George 33 North 72000\n",
+        "10 Helen 39 South 78000\n",
+        ";\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## Step 2: Explore the Data\n",
+        "\n",
+        "Let's examine our dataset to understand its structure and contents."
+      ],
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Display the dataset */\n",
+        "proc print data=work.customers;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Get dataset information */\n",
+        "proc contents data=work.customers;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## Step 3: Statistical Analysis\n",
+        "\n",
+        "Now let's perform some statistical analysis on our data."
+      ],
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Descriptive statistics */\n",
+        "proc means data=work.customers;\n",
+        "    var age income;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Frequency analysis by region */\n",
+        "proc freq data=work.customers;\n",
+        "    tables region;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## Step 4: Data Filtering and Subsetting\n",
+        "\n",
+        "Let's create subsets of our data based on different criteria."
+      ],
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Create high-income customers dataset */\n",
+        "%let income_threshold = 75000;\n",
+        "\n",
+        "data work.high_income;\n",
+        "    set work.customers;\n",
+        "    where income >= &income_threshold;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Display high-income customers */\n",
+        "proc print data=work.high_income;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Create age-based segments */\n",
+        "data work.age_segments;\n",
+        "    set work.customers;\n",
+        "    if age < 30 then age_group = 'Young';\n",
+        "    else if age < 40 then age_group = 'Middle';\n",
+        "    else age_group = 'Mature';\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Analyze by age group */\n",
+        "proc freq data=work.age_segments;\n",
+        "    tables age_group;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## Step 5: Cross-Library Operations\n",
+        "\n",
+        "Let's demonstrate working with multiple libraries and persistent storage."
+      ],
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Create analysis library */\n",
+        "libname analysis './analysis_results';\n",
+        "\n",
+        "/* Save processed data to library */\n",
+        "data analysis.customer_analysis;\n",
+        "    set work.age_segments;\n",
+        "    if income >= 75000 then income_category = 'High';\n",
+        "    else if income >= 65000 then income_category = 'Medium';\n",
+        "    else income_category = 'Low';\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Display final analysis dataset */\n",
+        "proc print data=analysis.customer_analysis;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Cross-tabulation analysis */\n",
+        "proc freq data=analysis.customer_analysis;\n",
+        "    tables age_group * income_category;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## Step 6: Advanced Analysis\n",
+        "\n",
+        "Let's perform some more advanced statistical analysis."
+      ],
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Detailed univariate analysis */\n",
+        "proc univariate data=work.customers;\n",
+        "    var income;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Grouped analysis by region */\n",
+        "proc means data=work.customers;\n",
+        "    var age income;\n",
+        "    by region;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## Summary\n",
+        "\n",
+        "This interactive analysis demonstrated:\n",
+        "\n",
+        "✅ **Data Creation**: Created customer dataset with DATALINES\n",
+        "✅ **Data Exploration**: Used PROC PRINT and PROC CONTENTS\n",
+        "✅ **Statistical Analysis**: PROC MEANS, PROC FREQ, PROC UNIVARIATE\n",
+        "✅ **Data Filtering**: WHERE clauses and conditional logic\n",
+        "✅ **Macro Variables**: Dynamic threshold setting\n",
+        "✅ **Cross-Library Operations**: Persistent data storage\n",
+        "✅ **Advanced Analysis**: Grouped statistics and cross-tabulations\n",
+        "\n",
+        "Open-SAS notebook support makes SAS analysis interactive and exploratory!\n",
+        "\n",
+        "### Next Steps\n",
+        "- Try modifying the data and re-running cells\n",
+        "- Experiment with different PROC procedures\n",
+        "- Create your own analysis workflows\n",
+        "- Combine with Python cells for advanced visualization"
+      ],
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Open-SAS",
+      "language": "osas",
+      "name": "osas"
+    },
+    "language_info": {
+      "name": "osas",
+      "mimetype": "text/x-sas",
+      "file_extension": ".osas"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 2
+}

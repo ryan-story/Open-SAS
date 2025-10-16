@@ -45,10 +45,15 @@ setup(
             "flake8>=3.8",
             "mypy>=0.900",
         ],
+        "notebook": [
+            "jupyter>=1.0.0",
+            "ipykernel>=6.0.0",
+        ],
     },
     entry_points={
         "console_scripts": [
             "open-sas=open_sas.cli:main",
+            "osas-kernel=open_sas.kernel:main",
         ],
     },
 )

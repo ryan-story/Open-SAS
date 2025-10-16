@@ -1,0 +1,121 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# Open-SAS Interactive Analysis\n",
+        "\n",
+        "This notebook demonstrates interactive SAS analysis using Open-SAS.\n",
+        "You can run each cell individually to see the results."
+      ],
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Create sample data */\n",
+        "data work.sales_data;\n",
+        "    input customer_id name $ age region $ sales_amount;\n",
+        "    datalines;\n",
+        "1 John 35 North 50000\n",
+        "2 Mary 28 South 75000\n",
+        "3 Bob 42 East 60000\n",
+        "4 Alice 31 West 80000\n",
+        "5 Charlie 29 North 55000\n",
+        "6 Diana 38 South 70000\n",
+        "7 Edward 45 East 90000\n",
+        "8 Fiona 26 West 65000\n",
+        ";\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Display the data */\n",
+        "proc print data=work.sales_data;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Calculate descriptive statistics */\n",
+        "proc means data=work.sales_data;\n",
+        "    var age sales_amount;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Frequency analysis by region */\n",
+        "proc freq data=work.sales_data;\n",
+        "    tables region;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Create high performers dataset */\n",
+        "%let min_sales = 70000;\n",
+        "\n",
+        "data work.high_performers;\n",
+        "    set work.sales_data;\n",
+        "    where sales_amount >= &min_sales;\n",
+        "    performance_rating = 'High';\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "/* Display high performers */\n",
+        "proc print data=work.high_performers;\n",
+        "run;"
+      ],
+      "language": "osas",
+      "metadata": {}
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "## Analysis Summary\n",
+        "\n",
+        "This analysis demonstrates:\n",
+        "- Data creation with DATALINES\n",
+        "- Descriptive statistics with PROC MEANS\n",
+        "- Frequency analysis with PROC FREQ\n",
+        "- Data filtering with WHERE clauses\n",
+        "- Macro variable usage\n",
+        "- Interactive execution in notebook format"
+      ],
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Open-SAS",
+      "language": "osas",
+      "name": "osas"
+    },
+    "language_info": {
+      "name": "osas",
+      "mimetype": "text/x-sas",
+      "file_extension": ".osas"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 2
+}
