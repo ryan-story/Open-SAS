@@ -157,6 +157,10 @@ class ProcParser:
                 if where_match:
                     options['where'] = where_match.group(1).strip()
         
+        # Debug: Print parsed options
+        print(f"Parsed PROC options: {options}")
+        print(f"Parsed statements: {statements}")
+        
         return ProcStatement(
             proc_name=proc_name,
             options=options,

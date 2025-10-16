@@ -60,12 +60,16 @@ class ExpressionEvaluator:
         expression = match.group(2).strip()
         
         try:
+            print(f"Evaluating assignment: {var_name} = {expression}")
             # Evaluate the expression for each row
             result = self._evaluate_expression(expression, data)
+            print(f"Result type: {type(result)}, length: {len(result) if hasattr(result, '__len__') else 'N/A'}")
             data[var_name] = result
             return data
         except Exception as e:
             print(f"Warning: Could not evaluate assignment '{assignment}': {e}")
+            import traceback
+            traceback.print_exc()
             return data
     
     def evaluate_if_then_else(self, if_statement: str, data: pd.DataFrame) -> pd.DataFrame:
@@ -133,6 +137,8 @@ class ExpressionEvaluator:
         Returns:
             Series with evaluated results
         """
+        print(f"Evaluating expression: {expression}")
+        
         # Handle IFN functions first (they can contain complex expressions)
         if 'ifn(' in expression.lower():
             return self._evaluate_ifn_expression(expression, data)
