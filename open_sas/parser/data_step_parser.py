@@ -81,13 +81,47 @@ class DataStepParser:
         rename_vars = {}
         by_vars = []
         
-        for i, line in enumerate(lines):
-            line = line.strip()
+        # First pass: combine multi-line assignments
+        combined_lines = []
+        i = 0
+        while i < len(lines):
+            line = lines[i].strip()
             if not line or line.upper().startswith('DATA '):
+                i += 1
                 continue
                 
             if line.upper() == 'RUN;':
                 break
+                
+            # Check if this line starts an assignment that continues on next lines
+            if '=' in line and not line.upper().startswith(('DROP', 'KEEP', 'RENAME', 'BY')):
+                # Combine with following lines until we hit a semicolon or new statement
+                combined_line = line
+                j = i + 1
+                while j < len(lines):
+                    next_line = lines[j].strip()
+                    if not next_line or next_line.upper() == 'RUN;':
+                        break
+                    if next_line.upper().startswith(('SET', 'WHERE', 'IF', 'DROP', 'KEEP', 'RENAME', 'BY')):
+                        break
+                    if '=' in next_line and not next_line.upper().startswith(('DROP', 'KEEP', 'RENAME', 'BY')):
+                        # This is a new assignment, stop here
+                        break
+                    combined_line += ' ' + next_line
+                    if ';' in next_line:
+                        break
+                    j += 1
+                combined_lines.append(combined_line)
+                i = j
+            else:
+                combined_lines.append(line)
+                i += 1
+        
+        # Second pass: parse the combined lines
+        for line in combined_lines:
+            line = line.strip()
+            if not line:
+                continue
                 
             # Parse SET statement
             if line.upper().startswith('SET '):

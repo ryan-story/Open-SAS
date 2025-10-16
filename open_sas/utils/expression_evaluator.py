@@ -299,22 +299,29 @@ class ExpressionEvaluator:
     def _evaluate_ifn_expression(self, expression: str, data: pd.DataFrame) -> pd.Series:
         """Evaluate IFN expressions with proper vectorization."""
         try:
+            print(f"Evaluating IFN expression: {expression}")
+            
             # Parse IFN expression: ifn(condition, true_value, false_value)
             import re
             match = re.match(r'ifn\s*\(\s*([^,]+),\s*([^,]+),\s*([^)]+)\)', expression, re.IGNORECASE)
             if not match:
+                print(f"IFN pattern not matched for: {expression}")
                 return pd.Series([expression] * len(data), index=data.index)
             
             condition_str, true_value, false_value = match.groups()
             condition_str = condition_str.strip()
-            true_value = true_value.strip()
+            true_value = true_value.strip().strip('"\'')
             false_value = false_value.strip()
+            
+            print(f"IFN parsed - condition: {condition_str}, true: {true_value}, false: {false_value}")
             
             # Evaluate the condition for each row
             condition_result = self._evaluate_condition_vectorized(condition_str, data)
+            print(f"Condition result: {condition_result}")
             
             # Handle nested IFN in false_value
             if 'ifn(' in false_value.lower():
+                print("Handling nested IFN")
                 # Parse nested IFN
                 nested_match = re.match(r'ifn\s*\(\s*([^,]+),\s*([^,]+),\s*([^)]+)\)', false_value, re.IGNORECASE)
                 if nested_match:
@@ -323,11 +330,13 @@ class ExpressionEvaluator:
                     val2 = val2.strip().strip('"\'')
                     val3 = val3.strip().strip('"\'')
                     
+                    print(f"Nested IFN - cond2: {cond2}, val2: {val2}, val3: {val3}")
+                    
                     # Create result series
                     result = pd.Series(index=data.index, dtype=object)
                     
                     # True cases get true_value
-                    result[condition_result] = true_value.strip().strip('"\'')
+                    result[condition_result] = true_value
                     
                     # False cases get evaluated with nested condition
                     false_mask = ~condition_result
@@ -336,17 +345,21 @@ class ExpressionEvaluator:
                         result[false_mask & nested_condition] = val2
                         result[false_mask & ~nested_condition] = val3
                     
+                    print(f"Final IFN result: {result}")
                     return result
             
             # Simple IFN case
             result = pd.Series(index=data.index, dtype=object)
-            result[condition_result] = true_value.strip().strip('"\'')
+            result[condition_result] = true_value
             result[~condition_result] = false_value.strip().strip('"\'')
             
+            print(f"Simple IFN result: {result}")
             return result
             
         except Exception as e:
             print(f"Error evaluating IFN expression '{expression}': {e}")
+            import traceback
+            traceback.print_exc()
             return pd.Series([expression] * len(data), index=data.index)
     
     def _evaluate_condition_vectorized(self, condition: str, data: pd.DataFrame) -> pd.Series:
