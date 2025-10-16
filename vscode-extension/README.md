@@ -2,15 +2,16 @@
 
 <div align="center">
   <img src="../media/osas.png" alt="Open-SAS Logo" width="100">
-  <h3>SAS syntax highlighting and execution support for VS Code</h3>
+  <h3>Statistical analysis syntax highlighting and execution support for VS Code</h3>
+  <p><em>SAS® is a registered trademark of SAS Institute Inc. Open-SAS is not affiliated with, endorsed by, or sponsored by SAS Institute Inc.</em></p>
 </div>
 
 ## Features
 
-- **Syntax Highlighting**: Full SAS syntax highlighting for `.osas` and `.sas` files
-- **Code Snippets**: Common SAS patterns and procedures
+- **Syntax Highlighting**: Full statistical analysis syntax highlighting for `.osas` and `.sas` files
+- **Code Snippets**: Common statistical analysis patterns and procedures
 - **File Execution**: Run Open-SAS files directly from VS Code
-- **Notebook Support**: Interactive SAS notebooks (both `.ipynb` with osas kernel and `.osasnb` files)
+- **Notebook Support**: Interactive statistical notebooks (both `.ipynb` with osas kernel and `.osasnb` files)
 - **IntelliSense**: Code completion and syntax checking
 - **Integrated Terminal**: View results in VS Code's integrated terminal
 
@@ -48,13 +49,13 @@
 4. View formatted output and datasets
 
 ### Code Snippets
-Type common SAS patterns and press `Tab` to expand:
+Type common statistical analysis patterns and press `Tab` to expand:
 - `data` → DATA step template
-- `proc` → PROC procedure template
+- `proc` → Statistical procedure template
 - `means` → PROC MEANS template
 - `freq` → PROC FREQ template
 
-## Supported SAS Features
+## Supported Features
 
 - **DATA Steps**: Variable creation, conditional logic, DATALINES
 - **PROC MEANS**: Descriptive statistics with CLASS variables

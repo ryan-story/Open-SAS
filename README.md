@@ -2,14 +2,15 @@
 
 <div align="center">
   <img src="media/osas.png" alt="Open-SAS Logo" width="200">
-  <h3>A Python-based SAS interpreter with Jupyter notebook support</h3>
-  <p>Write SAS code with full syntax highlighting and Python backend execution.</p>
+  <h3>An open-source, Python-based statistical analysis system</h3>
+  <p>Write SAS-like code with full syntax highlighting and Python backend execution.</p>
+  <p><em>SAS® is a registered trademark of SAS Institute Inc. Open-SAS is not affiliated with, endorsed by, or sponsored by SAS Institute Inc.</em></p>
 </div>
 
 ## Overview
 
-Open-SAS bridges the gap between SAS and Python by providing:
-- **SAS-like syntax** for data manipulation and analysis
+Open-SAS provides an open-source alternative for statistical analysis by offering:
+- **SAS-inspired syntax** for data manipulation and analysis
 - **Python backend** for execution and performance
 - **Jupyter notebook support** with Open-SAS kernel
 - **VS Code extension** with syntax highlighting and execution
@@ -19,25 +20,25 @@ Open-SAS bridges the gap between SAS and Python by providing:
 ## Features
 
 ### Core Interpreter
-- SAS DATA step functionality with DATALINES support
-- Major PROC procedures (PROC MEANS, PROC FREQ, PROC SORT, PROC PRINT)
-- SAS-style data manipulation and analysis
+- SAS-inspired DATA step functionality with DATALINES support
+- Statistical procedures (PROC MEANS, PROC FREQ, PROC SORT, PROC PRINT)
+- SAS-like data manipulation and analysis syntax
 - Python pandas/numpy backend for performance
-- Clean, professional output matching SAS behavior
+- Clean, professional output with familiar formatting
 
 ### Jupyter Notebook Support
 - Open-SAS kernel for Jupyter notebooks
-- Interactive SAS programming in notebook environment
+- Interactive statistical programming in notebook environment
 - Rich output display with formatted tables
 - Dataset visualization and exploration
 
 ### VS Code Extension
 - Syntax highlighting for `.osas` and `.sas` files
-- Code snippets for common SAS patterns
+- Code snippets for common statistical analysis patterns
 - File execution directly from VS Code
 - Notebook support for interactive analysis
 
-### Supported SAS Features
+### Supported Features
 - **DATA Steps**: Variable creation, conditional logic, DATALINES input
 - **PROC MEANS**: Descriptive statistics with CLASS variables and OUTPUT statements
 - **PROC FREQ**: Frequency tables and cross-tabulations with options
@@ -76,7 +77,7 @@ from open_sas import SASInterpreter
 # Create interpreter
 interpreter = SASInterpreter()
 
-# Create sample data
+# Create sample data using SAS-inspired syntax
 interpreter.run_code('''
 data work.employees;
     input employee_id name $ department $ salary;
@@ -89,7 +90,7 @@ data work.employees;
 run;
 ''')
 
-# Run analysis
+# Run statistical analysis
 interpreter.run_code('''
 proc means data=work.employees;
     class department;
@@ -126,11 +127,11 @@ python -m open_sas.cli interactive
 
 Check out `examples/osas_walkthrough.ipynb` for a comprehensive demonstration of Open-SAS capabilities including:
 - DATA step with DATALINES
-- PROC MEANS with CLASS variables and OUTPUT statements
-- PROC FREQ with cross-tabulations
-- PROC SORT with ascending/descending order
-- PROC PRINT for data display
-- NOPRINT option usage
+- Statistical procedures with CLASS variables and OUTPUT statements
+- Frequency analysis with cross-tabulations
+- Data sorting with ascending/descending order
+- Data display and formatting
+- Silent execution options
 
 ## Project Structure
 
@@ -138,16 +139,16 @@ Check out `examples/osas_walkthrough.ipynb` for a comprehensive demonstration of
 Open-SAS/
 ├── open_sas/                 # Core Python package
 │   ├── __init__.py
-│   ├── interpreter.py        # Main SAS interpreter
+│   ├── interpreter.py        # Main statistical interpreter
 │   ├── cli.py               # Command line interface
 │   ├── kernel/              # Jupyter kernel implementation
 │   │   ├── osas_kernel.py   # Main kernel
 │   │   └── install.py       # Kernel installation
-│   ├── parser/              # SAS syntax parser
+│   ├── parser/              # Syntax parser
 │   │   ├── data_step_parser.py
 │   │   ├── proc_parser.py
 │   │   └── macro_parser.py
-│   ├── procs/               # PROC procedure implementations
+│   ├── procs/               # Statistical procedure implementations
 │   │   ├── proc_means.py
 │   │   ├── proc_freq.py
 │   │   ├── proc_sort.py
@@ -182,29 +183,29 @@ python -c "from open_sas import SASInterpreter; print('Open-SAS loaded successfu
 
 ### ✅ Completed Features
 - [x] Core DATA step implementation with DATALINES
-- [x] PROC MEANS with CLASS variables and OUTPUT statements
-- [x] PROC FREQ with cross-tabulations and options
-- [x] PROC SORT with ascending/descending order
-- [x] PROC PRINT for data display
-- [x] NOPRINT option for silent execution
+- [x] Statistical procedures with CLASS variables and OUTPUT statements
+- [x] Frequency analysis with cross-tabulations and options
+- [x] Data sorting with ascending/descending order
+- [x] Data display and formatting
+- [x] Silent execution options
 - [x] Jupyter notebook kernel
 - [x] VS Code extension with syntax highlighting
 - [x] Clean, professional output
-- [x] Proper SAS-like behavior
+- [x] SAS-inspired behavior and syntax
 
 ### 🚧 Future Enhancements
-- [ ] Additional PROC procedures (PROC SQL, PROC REG, etc.)
+- [ ] Additional statistical procedures (SQL queries, regression analysis, etc.)
 - [ ] Advanced macro functionality
 - [ ] Performance optimizations
-- [ ] SAS/ACCESS compatibility layer
+- [ ] Enhanced data connectivity options
 
 ## Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ### Areas for Contribution
-- Additional PROC procedures
-- SAS macro functionality
+- Additional statistical procedures
+- Macro functionality enhancements
 - Performance optimizations
 - VS Code extension features
 - Documentation and examples
