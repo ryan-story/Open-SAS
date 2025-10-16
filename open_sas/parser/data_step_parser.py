@@ -89,6 +89,12 @@ class DataStepParser:
         full_text = ' '.join(lines)
         print(f"Full text: {full_text}")
         
+        # Check if the full text contains the arithmetic operation
+        if '* 0.1' in full_text:
+            print("✅ Full text contains '* 0.1'")
+        else:
+            print("❌ Full text does NOT contain '* 0.1'")
+        
         # Find the DATA step content (between DATA and RUN)
         data_start = full_text.upper().find('DATA ')
         if data_start == -1:
