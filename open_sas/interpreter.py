@@ -117,7 +117,9 @@ class SASInterpreter:
     
     def _split_statements(self, code: str) -> List[str]:
         """Split SAS code into individual statements."""
+        print(f"Splitting code: {repr(code)}")
         lines = code.split('\n')
+        print(f"Code lines: {lines}")
         statements = []
         current_statement = ""
         in_datalines = False
