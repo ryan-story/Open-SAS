@@ -1,7 +1,7 @@
 {
   "name": "open-sas",
-  "displayName": "Open-SAS",
-  "description": "Statistical analysis syntax highlighting and execution support for .osas files with Python backend",
+  "displayName": "Open-SAS: SAS-Like Statistical Notebook",
+  "description": "Run SAS-style programs in VS Code with a fast, Python-powered interpreter.",
   "version": "0.1.0",
   "publisher": "RyanBlakeStory",
   "author": {
@@ -18,7 +18,7 @@
     "url": "https://github.com/ryan-story/Open-SAS/issues"
   },
   "license": "MIT",
-  "icon": "icon.png",
+  "icon": "images/open-sas-icon.png",
   "engines": {
     "vscode": "^1.60.0"
   },
@@ -28,10 +28,11 @@
     "Other"
   ],
   "keywords": [
-    "sas",
     "statistics",
     "data-analysis",
-    "python"
+    "python",
+    "sas-like",
+    "statistical-computing"
   ],
   "activationEvents": [
     "onLanguage:osas",

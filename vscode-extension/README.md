@@ -1,16 +1,19 @@
 # Open-SAS VS Code Extension
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ryan-story/Open-SAS/main/vscode-extension/images/open-sas-icon.png" width="150"/>
+</p>
+
 <div align="center">
-  <img src="../media/osas.png" alt="Open-SAS Logo" width="100">
-  <h3>Statistical analysis syntax highlighting and execution support for VS Code</h3>
+  <h3>SAS-style statistical analysis syntax highlighting and execution support for VS Code</h3>
   <p><em>SAS® is a registered trademark of SAS Institute Inc. Open-SAS is not affiliated with, endorsed by, or sponsored by SAS Institute Inc.</em></p>
 </div>
 
 ## Features
 
-- **Syntax Highlighting**: Full statistical analysis syntax highlighting for `.osas` and `.sas` files
+- **Syntax Highlighting**: Full SAS-style statistical analysis syntax highlighting for `.osas` and `.sas` files
 - **Code Snippets**: Common statistical analysis patterns and procedures
-- **File Execution**: Run Open-SAS files directly from VS Code
+- **File Execution**: Run SAS-style Open-SAS files directly from VS Code
 - **Notebook Support**: Interactive statistical notebooks (both `.ipynb` with osas kernel and `.osasnb` files)
 - **IntelliSense**: Code completion and syntax checking
 - **Integrated Terminal**: View results in VS Code's integrated terminal
@@ -29,9 +32,9 @@
 
 ## Usage
 
-### Basic SAS Files (.osas)
+### Basic SAS-Style Files (.osas)
 1. Create a new file with `.osas` extension
-2. Write your SAS code
+2. Write your SAS-style code
 3. Use `Ctrl+Shift+P` → "Open-SAS: Run File" to execute
 4. View results in the integrated terminal
 
@@ -40,11 +43,11 @@
 1. Install the Open-SAS kernel: `python -m open_sas.kernel install`
 2. Create a new Jupyter notebook (`.ipynb`)
 3. Select "osas" as the kernel
-4. Write SAS code in cells and execute
+4. Write SAS-style code in cells and execute
 
 **Option 2: Open-SAS Notebooks (.osasnb)**
 1. Create a new file with `.osasnb` extension
-2. Write SAS code in cells
+2. Write SAS-style code in cells
 3. Execute cells individually or run all
 4. View formatted output and datasets
 
@@ -96,3 +99,11 @@ MIT License - see [LICENSE](../LICENSE) for details.
 - 📖 [Documentation](https://github.com/ryan-story/Open-SAS/wiki)
 - 🐛 [Issue Tracker](https://github.com/ryan-story/Open-SAS/issues)
 - 💬 [Discussions](https://github.com/ryan-story/Open-SAS/discussions)
+
+## ⚖️ Legal Disclaimer
+
+**SAS® is a registered trademark of SAS Institute Inc.** Open-SAS is not affiliated with, endorsed by, or sponsored by SAS Institute Inc.
+
+This extension uses original, independently developed code to implement statistical functionality using SAS-like syntax for educational and analytical use. It is not a clone, derivative, or replacement for SAS software and does not use any proprietary code from SAS Institute.
+
+Open-SAS is provided as-is, under an open-source license, for research and community contribution purposes.
