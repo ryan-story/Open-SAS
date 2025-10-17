@@ -17,6 +17,14 @@ Open-SAS provides an open-source alternative for statistical analysis by offerin
 - **Cross-platform compatibility** (Windows, macOS, Linux)
 - **Open source** and free to use
 
+### 🌟 **What Makes Open-SAS Special?**
+
+- **🤖 AI Integration**: Built-in **PROC LANGUAGE** with LLM capabilities for intelligent data analysis
+- **🧠 Complete ML Pipeline**: From data exploration to model deployment using familiar SAS syntax
+- **💾 Modern SQL**: **PROC SQL** powered by DuckDB for high-performance data querying
+- **🔧 Full SAS Compatibility**: Complete macro system, format system, and statistical procedures
+- **📊 Rich Visualizations**: Professional output formatting with TITLE statements and structured results
+
 ## Features
 
 ### Core Interpreter
@@ -39,13 +47,37 @@ Open-SAS provides an open-source alternative for statistical analysis by offerin
 - Notebook support for interactive analysis
 
 ### Supported Features
-- **DATA Steps**: Variable creation, conditional logic, DATALINES input
+
+#### 📊 **Statistical Procedures**
 - **PROC MEANS**: Descriptive statistics with CLASS variables and OUTPUT statements
 - **PROC FREQ**: Frequency tables and cross-tabulations with options
 - **PROC SORT**: Data sorting with ascending/descending order
 - **PROC PRINT**: Data display and formatting
 - **PROC REG**: Linear regression analysis with MODEL, OUTPUT, and SCORE statements
+- **PROC UNIVARIATE**: Detailed univariate analysis with distribution diagnostics
+- **PROC CORR**: Correlation analysis (Pearson, Spearman)
+- **PROC FACTOR**: Principal component analysis and factor analysis
+- **PROC CLUSTER**: Clustering methods (k-means, hierarchical)
+- **PROC NPAR1WAY**: Nonparametric tests (Mann-Whitney, Kruskal-Wallis)
+- **PROC TTEST**: T-tests (independent and paired)
+- **PROC LOGIT**: Logistic regression modeling
+- **PROC TIMESERIES**: Time series analysis and seasonal decomposition
 - **PROC SURVEYSELECT**: Random sampling with SRS method, SAMPRATE/N options, and OUTALL flag
+
+#### 🤖 **Machine Learning Procedures**
+- **PROC TREE**: Decision trees for classification and regression
+- **PROC FOREST**: Random forests for ensemble learning
+- **PROC BOOST**: Gradient boosting for advanced modeling
+
+#### 💻 **Advanced Features**
+- **PROC SQL**: SQL query processing with DuckDB backend
+- **PROC LANGUAGE**: Built-in LLM integration for text generation, Q&A, and data analysis
+- **SAS Macro System**: Complete macro facility with %MACRO/%MEND, %LET, & substitution, %PUT, %IF/%THEN/%ELSE, %DO/%END
+- **SAS Format System**: Built-in date/time, numeric, and currency formats with metadata persistence
+- **TITLE Statements**: Professional output formatting
+
+#### 🔧 **Core Data Processing**
+- **DATA Steps**: Variable creation, conditional logic, DATALINES input
 - **Macro variables**: %LET, %PUT statements
 - **Libraries**: LIBNAME functionality
 - **NOPRINT option**: Silent execution for procedures
@@ -69,6 +101,35 @@ jupyter kernelspec list
 ### VS Code Extension
 1. Install from VS Code Marketplace: "Open-SAS" by RyanBlakeStory
 2. Or install from source (see Development section)
+
+## 🚀 **Exciting New Features**
+
+### 🤖 **PROC LANGUAGE - AI-Powered Analysis**
+```osas
+proc language prompt="Analyze the correlation between income and spending in our dataset";
+run;
+```
+**Built-in LLM integration** for text generation, Q&A, and intelligent data analysis using Hugging Face transformers!
+
+### 🧠 **Complete Machine Learning Workflow**
+Check out our **[ML Project Demo](examples/ML_project_in_osas.ipynb)** - a comprehensive regression analysis project showcasing:
+- **PROC UNIVARIATE** for distribution exploration
+- **PROC SURVEYSELECT** for train/test splitting  
+- **PROC REG** with MODEL, OUTPUT, and SCORE statements
+- **Macro system** for reusable analysis workflows
+- **Complete ML pipeline** in pure Open-SAS syntax
+
+### 💾 **PROC SQL - Modern Data Querying**
+```osas
+proc sql;
+  select age, income, spend,
+         case when income > 60000 then 'High' else 'Low' end as income_group
+  from work.customers
+  where age between 25 and 50
+  order by income desc;
+quit;
+```
+**DuckDB-powered SQL** processing with full dataset integration!
 
 ## Quick Start
 
@@ -125,15 +186,24 @@ python -m open_sas.cli run example.osas
 python -m open_sas.cli interactive
 ```
 
-## Demo
+## 📚 **Examples & Demos**
 
-Check out `examples/osas_walkthrough.ipynb` for a comprehensive demonstration of Open-SAS capabilities including:
-- DATA step with DATALINES
-- Statistical procedures with CLASS variables and OUTPUT statements
-- Frequency analysis with cross-tabulations
-- Data sorting with ascending/descending order
-- Data display and formatting
-- Silent execution options
+### 🎯 **Complete ML Project**
+**[ML Project Demo](examples/ML_project_in_osas.ipynb)** - A comprehensive machine learning workflow:
+- Synthetic dataset creation with 30 observations
+- **PROC UNIVARIATE** for distribution analysis
+- **PROC SURVEYSELECT** for train/test splitting (70/30)
+- **PROC REG** with MODEL, OUTPUT, and SCORE statements
+- Macro-based reusable analysis functions
+- Complete regression analysis pipeline
+
+### 📊 **Comprehensive Walkthrough**
+**[Open-SAS Walkthrough](examples/osas_walkthrough.ipynb)** - Complete feature demonstration:
+- All statistical procedures with examples
+- Macro system demonstrations
+- Format system usage
+- Advanced data manipulation techniques
+- Real-world analysis scenarios
 
 ## Project Structure
 
