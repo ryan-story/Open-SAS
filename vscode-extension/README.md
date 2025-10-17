@@ -57,16 +57,35 @@ Type common statistical analysis patterns and press `Tab` to expand:
 - `proc` → Statistical procedure template
 - `means` → PROC MEANS template
 - `freq` → PROC FREQ template
+- `reg` → PROC REG template
+- `sql` → PROC SQL template
+- `macro` → Macro definition template
 
 ## Supported Features
 
 - **DATA Steps**: Variable creation, conditional logic, DATALINES
-- **PROC MEANS**: Descriptive statistics with CLASS variables
-- **PROC FREQ**: Frequency tables and cross-tabulations
+- **PROC MEANS**: Descriptive statistics with CLASS variables and OUTPUT statements
+- **PROC FREQ**: Frequency tables and cross-tabulations with options
 - **PROC SORT**: Data sorting with ascending/descending order
 - **PROC PRINT**: Data display and formatting
+- **PROC REG**: Linear regression analysis with MODEL, OUTPUT, and SCORE statements
+- **PROC SURVEYSELECT**: Random sampling with SRS method, SAMPRATE/N options, and OUTALL flag
+- **PROC UNIVARIATE**: Detailed univariate analysis with distribution diagnostics
+- **PROC CORR**: Correlation analysis (Pearson, Spearman)
+- **PROC FACTOR**: Principal component analysis and factor analysis
+- **PROC CLUSTER**: Clustering methods (k-means, hierarchical)
+- **PROC NPAR1WAY**: Nonparametric tests (Mann-Whitney, Kruskal-Wallis)
+- **PROC TTEST**: T-tests (independent and paired)
+- **PROC LOGIT**: Logistic regression modeling
+- **PROC TIMESERIES**: Time series analysis and seasonal decomposition
+- **PROC TREE/FOREST/BOOST**: Machine learning (decision trees, random forests, gradient boosting)
+- **PROC SQL**: SQL query processing with DuckDB backend
+- **PROC LANGUAGE**: Built-in LLM integration for text generation and analysis
+- **SAS Macro System**: %MACRO/%MEND, %LET, & substitution, %PUT, %IF/%THEN/%ELSE, %DO/%END
+- **SAS Format System**: Built-in date/time, numeric, and currency formats with metadata persistence
 - **Macro Variables**: %LET, %PUT statements
 - **Libraries**: LIBNAME functionality
+- **TITLE Statements**: Title support for output formatting
 
 ## Configuration
 
