@@ -17,7 +17,7 @@ class ProcContents:
     def __init__(self):
         pass
     
-    def execute(self, data: pd.DataFrame, proc_info: ProcStatement) -> Dict[str, Any]:
+    def execute(self, data: pd.DataFrame, proc_info: ProcStatement, dataset_manager=None) -> Dict[str, Any]:
         """
         Execute PROC CONTENTS on the given data.
         

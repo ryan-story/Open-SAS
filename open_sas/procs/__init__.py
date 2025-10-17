@@ -20,6 +20,9 @@ from .proc_logit import ProcLogit
 from .proc_timeseries import ProcTimeseries
 from .proc_ml import ProcTree, ProcForest, ProcBoost
 from .proc_language import ProcLanguage
+from .proc_sql import ProcSQL
+from .proc_surveyselect import ProcSurveySelect
+from .proc_reg import ProcReg
 
 __all__ = [
     "ProcMeans",
@@ -38,5 +41,8 @@ __all__ = [
     "ProcTree",
     "ProcForest",
     "ProcBoost",
-    "ProcLanguage"
+    "ProcLanguage",
+    "ProcSQL",
+    "ProcSurveySelect",
+    "ProcReg"
 ]

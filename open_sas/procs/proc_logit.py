@@ -19,7 +19,7 @@ class ProcLogit:
     def __init__(self):
         pass
     
-    def execute(self, data: pd.DataFrame, proc_info: ProcStatement) -> Dict[str, Any]:
+    def execute(self, data: pd.DataFrame, proc_info: ProcStatement, dataset_manager=None) -> Dict[str, Any]:
         """
         Execute PROC LOGIT on the given data.
         
@@ -129,7 +129,7 @@ class ProcLogit:
             else:  # cloglog
                 model = sm.Logit(y_encoded, X)  # Use logit as approximation
             
-            fitted_model = model.fit(disp=0)
+            fitted_model = model.fit(disp=0, maxiter=1000)
             
             # Format output
             results['output_text'].extend(self._format_logistic_output(fitted_model, X.columns.tolist(), link))
@@ -138,7 +138,18 @@ class ProcLogit:
             results['output_data'] = self._create_output_dataframe(fitted_model, X.columns.tolist())
             
         except Exception as e:
-            results['output_text'].append(f"ERROR: Model fitting failed: {str(e)}")
+            error_msg = str(e)
+            if "Perfect separation" in error_msg or "Singular matrix" in error_msg:
+                results['output_text'].append("WARNING: Perfect separation detected in the data.")
+                results['output_text'].append("This occurs when predictors perfectly predict the outcome.")
+                results['output_text'].append("Consider:")
+                results['output_text'].append("1. Using different predictor variables")
+                results['output_text'].append("2. Adding regularization")
+                results['output_text'].append("3. Checking for data quality issues")
+                results['output_text'].append("")
+                results['output_text'].append(f"Technical error: {error_msg}")
+            else:
+                results['output_text'].append(f"ERROR: Model fitting failed: {error_msg}")
             return results
         
         return results

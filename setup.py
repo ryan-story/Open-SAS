@@ -36,6 +36,14 @@ setup(
         "pandas>=1.3.0",
         "numpy>=1.20.0",
         "pyparsing>=3.0.0",
+        "scipy>=1.7.0",
+        "scikit-learn>=1.0.0",
+        "statsmodels>=0.13.0",
+        "matplotlib>=3.3.0",
+        "requests>=2.25.0",
+        "transformers>=4.20.0",
+        "torch>=1.12.0",
+        "duckdb>=1.0.0",
     ],
     extras_require={
         "dev": [

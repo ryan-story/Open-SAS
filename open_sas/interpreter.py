@@ -15,13 +15,17 @@ from .parser.proc_parser import ProcParser
 from .parser.macro_parser import MacroParser
 from .procs import (
     ProcMeans, ProcFreq, ProcPrint, ProcSort, 
-    ProcContents, ProcUnivariate, ProcCorr, ProcFactor, ProcCluster, ProcNpar1way, ProcTtest, ProcLogit, ProcTimeseries, ProcTree, ProcForest, ProcBoost, ProcLanguage
+    ProcContents, ProcUnivariate, ProcCorr, ProcFactor, ProcCluster, ProcNpar1way, ProcTtest, ProcLogit, ProcTimeseries, ProcTree, ProcForest, ProcBoost, ProcLanguage, ProcSQL, ProcSurveySelect, ProcReg
 )
 from .utils.expression_parser import ExpressionParser
 from .utils.expression_evaluator import ExpressionEvaluator
 from .utils.data_utils import DataUtils
 from .utils.libname_manager import LibnameManager
 from .utils.error_handler import ErrorHandler, ErrorType
+from .utils.macro_processor import MacroProcessor
+from .utils.format_processor import FormatProcessor
+from .utils.sas_dataset import SasDataset, SasDatasetManager
+from .utils.format_informat_parser import FormatInformatParser
 
 
 class SASInterpreter:
@@ -49,6 +53,15 @@ class SASInterpreter:
         self.libname_manager = LibnameManager()
         self.error_handler = ErrorHandler()
         
+        # Initialize new macro and format systems
+        self.macro_processor = MacroProcessor()
+        self.format_processor = FormatProcessor()
+        self.dataset_manager = SasDatasetManager()
+        self.format_informat_parser = FormatInformatParser()
+        
+        # Initialize title tracking
+        self.current_title = None
+        
         # Initialize PROC implementations
         self.proc_implementations = {
             'MEANS': ProcMeans(),
@@ -68,7 +81,10 @@ class SASInterpreter:
             'TREE': ProcTree(),
             'FOREST': ProcForest(),
             'BOOST': ProcBoost(),
-            'LANGUAGE': ProcLanguage()
+            'LANGUAGE': ProcLanguage(),
+            'SQL': ProcSQL(),
+            'SURVEYSELECT': ProcSurveySelect(),
+            'REG': ProcReg()
         }
         
     def run_file(self, file_path: str) -> None:
@@ -93,8 +109,14 @@ class SASInterpreter:
         Args:
             sas_code: SAS code to execute
         """
-        # First, process macro language constructs
-        processed_code = self.macro_parser.process_macro_code(sas_code)
+        # Split code into lines for macro processing
+        code_lines = sas_code.split('\n')
+        
+        # Process macro statements first
+        expanded_code_lines = self.macro_processor.process_macro_statements(code_lines)
+        
+        # Join back into code string
+        processed_code = '\n'.join(expanded_code_lines)
         
         # Remove comments and clean up code
         cleaned_code = self._clean_code(processed_code)
@@ -177,15 +199,26 @@ class SASInterpreter:
             if in_data_step:
                 current_statement += '\n' + line
             elif line.endswith(';'):
-                current_statement += ' ' + line
-                statements.append(current_statement.strip())
-                current_statement = ""
-            else:
-                # Check if this is a new statement (starts with a keyword)
-                if line.upper().startswith(('TABLES', 'VAR', 'BY', 'CLASS', 'MODEL', 'OUTPUT', 'WHERE')):
+                # Check if this line starts with a keyword (even if indented)
+                line_upper = line.strip().upper()
+                if line_upper.startswith(('TABLES', 'VAR', 'BY', 'CLASS', 'MODEL', 'OUTPUT', 'WHERE', 'TITLE')):
+                    # This is a new statement, finish the current one first
                     if current_statement.strip():
                         statements.append(current_statement.strip())
-                    current_statement = line
+                    current_statement = line.strip()
+                    statements.append(current_statement.strip())
+                    current_statement = ""
+                else:
+                    current_statement += ' ' + line
+                    statements.append(current_statement.strip())
+                    current_statement = ""
+            else:
+                # Check if this is a new statement (starts with a keyword, even if indented)
+                line_upper = line.strip().upper()
+                if line_upper.startswith(('TABLES', 'VAR', 'BY', 'CLASS', 'MODEL', 'OUTPUT', 'WHERE', 'TITLE')):
+                    if current_statement.strip():
+                        statements.append(current_statement.strip())
+                    current_statement = line.strip()
                 else:
                     current_statement += ' ' + line
         
@@ -210,6 +243,31 @@ class SASInterpreter:
             self._execute_libname(statement)
         elif statement.upper().startswith('%LET '):
             self._execute_let(statement)
+        elif statement.upper().startswith('%PUT '):
+            self._execute_put(statement)
+        elif statement.upper().startswith('TITLE '):
+            self._execute_title(statement)
+        elif statement.upper().startswith('%MACRO '):
+            # Macro definitions are handled by the macro processor
+            pass
+        elif statement.upper().startswith('%MEND'):
+            # Macro definitions are handled by the macro processor
+            pass
+        elif statement.upper().startswith('%IF '):
+            # Macro conditional logic is handled by the macro processor
+            pass
+        elif statement.upper().startswith('%DO '):
+            # Macro loops are handled by the macro processor
+            pass
+        elif statement.upper().startswith('%END'):
+            # Macro loops are handled by the macro processor
+            pass
+        elif statement.upper().startswith('%INCLUDE '):
+            # Include statements are handled by the macro processor
+            pass
+        elif statement.startswith('%') and '(' in statement:
+            # Macro calls are handled by the macro processor
+            pass
         elif statement.upper() == 'RUN;':
             # RUN statement - currently no-op, but could be used for validation
             pass
@@ -228,21 +286,38 @@ class SASInterpreter:
                 if input_data is not None and not input_data.empty:
                     # Extract output dataset name
                     lines = statement.split('\n')
+                    output_dataset = None
                     for line in lines:
                         if line.strip().upper().startswith('DATA '):
                             match = re.match(r'data\s+([^;]+)', line, re.IGNORECASE)
                             if match:
                                 output_dataset = match.group(1).strip()
-                                self.data_sets[output_dataset] = input_data
-                                
-                                # Save to library if it's a library.dataset format
-                                if '.' in output_dataset:
-                                    libname, dataset_name = output_dataset.split('.', 1)
-                                    if self.libname_manager.save_dataset(libname, dataset_name, input_data):
-                                        print(f"Saved dataset {output_dataset} to library {libname}")
-                                
-                                # Dataset creation message will be printed in the main execution path
-                                return
+                                break
+                    
+                    if output_dataset:
+                        # Create SAS dataset with format metadata
+                        sas_dataset = SasDataset(name=output_dataset, dataframe=input_data)
+                        
+                        # Parse and apply FORMAT statements
+                        format_statements = self.format_informat_parser.extract_format_statements(lines)
+                        self.format_informat_parser.apply_format_statements_to_dataset(sas_dataset, format_statements)
+                        
+                        # Parse and apply INFORMAT statements
+                        informat_statements = self.format_informat_parser.extract_informat_statements(lines)
+                        self.format_informat_parser.apply_informat_statements_to_dataset(sas_dataset, informat_statements)
+                        
+                        # Store the result (both as DataFrame and SAS dataset)
+                        self.data_sets[output_dataset] = input_data
+                        self.dataset_manager.datasets[output_dataset] = sas_dataset
+                        
+                        # Save to library if it's a library.dataset format
+                        if '.' in output_dataset:
+                            libname, dataset_name = output_dataset.split('.', 1)
+                            if self.libname_manager.save_dataset(libname, dataset_name, input_data):
+                                print(f"Saved dataset {output_dataset} to library {libname}")
+                        
+                        print(f"Saved dataset {output_dataset} to library work")
+                        return
             else:
                 # Parse the DATA step normally
                 data_info = self.data_step_parser.parse_data_step(statement)
@@ -303,8 +378,20 @@ class SASInterpreter:
                     if data_info.rename_vars:
                         input_data = self.data_utils.rename_columns(input_data, data_info.rename_vars)
                     
-                    # Store the result
+                    # Create SAS dataset with format metadata
+                    sas_dataset = SasDataset(name=data_info.output_dataset, dataframe=input_data)
+                    
+                    # Parse and apply FORMAT statements
+                    format_statements = self.format_informat_parser.extract_format_statements(statement.split('\n'))
+                    self.format_informat_parser.apply_format_statements_to_dataset(sas_dataset, format_statements)
+                    
+                    # Parse and apply INFORMAT statements
+                    informat_statements = self.format_informat_parser.extract_informat_statements(statement.split('\n'))
+                    self.format_informat_parser.apply_informat_statements_to_dataset(sas_dataset, informat_statements)
+                    
+                    # Store the result (both as DataFrame and SAS dataset)
                     self.data_sets[data_info.output_dataset] = input_data
+                    self.dataset_manager.datasets[data_info.output_dataset] = sas_dataset
                     
                     # Save to library if it's a library.dataset format
                     if '.' in data_info.output_dataset:
@@ -356,13 +443,37 @@ class SASInterpreter:
                     dataset_name = list(self.data_sets.keys())[-1]
                     input_data = self.data_sets[dataset_name]
                 else:
-                    print("ERROR: No dataset available for PROC")
-                    return
+                    # Some PROCs don't require datasets (e.g., PROC LANGUAGE, PROC SQL)
+                    if proc_info.proc_name in ['LANGUAGE', 'SQL']:
+                        input_data = pd.DataFrame()  # Empty DataFrame for procedures that don't need data
+                    else:
+                        print("ERROR: No dataset available for PROC")
+                        return
             
             # Execute the appropriate PROC
             if proc_info.proc_name in self.proc_implementations:
                 proc_impl = self.proc_implementations[proc_info.proc_name]
-                results = proc_impl.execute(input_data, proc_info)
+                
+                # Special handling for PROC SQL - register all datasets
+                if proc_info.proc_name == 'SQL' and hasattr(proc_impl, 'register_dataset'):
+                    # Register all datasets from memory
+                    for dataset_name, dataset_df in self.data_sets.items():
+                        proc_impl.register_dataset(dataset_name, dataset_df)
+                    
+                    # Register datasets from libraries
+                    for libname in self.libname_manager.libraries:
+                        lib_datasets = self.libname_manager.get_library_datasets(libname)
+                        for dataset_name, dataset_df in lib_datasets.items():
+                            full_name = f"{libname}.{dataset_name}"
+                            proc_impl.register_dataset(full_name, dataset_df)
+                
+                # Pass title to PROC PRINT if available
+                if proc_info.proc_name == 'PRINT' and self.current_title:
+                    results = proc_impl.execute(input_data, proc_info, dataset_manager=self.dataset_manager, title=self.current_title)
+                    # Clear the title after use
+                    self.current_title = None
+                else:
+                    results = proc_impl.execute(input_data, proc_info, dataset_manager=self.dataset_manager)
                 
                 # Display output
                 for line in results.get('output_text', []):
@@ -410,11 +521,43 @@ class SASInterpreter:
         """Execute a %LET macro statement."""
         # Debug: Executing %LET
         try:
-            var_name, value = self.macro_parser.parse_let_statement(statement)
-            self.macro_parser.macro_variables[var_name] = value
-            print(f"Macro variable {var_name} = {value}")
+            # Use the new macro processor
+            self.macro_processor._parse_let_statement(statement)
+            print(f"Macro variable set successfully")
         except Exception as e:
             print(f"ERROR in %LET: {e}")
+    
+    def _execute_put(self, statement: str) -> None:
+        """Execute a %PUT statement."""
+        # Extract text to print
+        match = re.match(r'%PUT\s+(.*?);?\s*$', statement, re.IGNORECASE)
+        if match:
+            text = match.group(1).strip()
+            # Substitute macro variables
+            expanded_text = self.macro_processor._substitute_variables(text)
+            print(f"MACRO: {expanded_text}")
+        else:
+            print(f"ERROR: Invalid %PUT statement: {statement}")
+    
+    def _execute_title(self, statement: str) -> None:
+        """Execute a TITLE statement."""
+        # Extract title text
+        match = re.match(r'TITLE\s+(.*?);?\s*$', statement, re.IGNORECASE)
+        if match:
+            title_text = match.group(1).strip()
+            # Remove quotes if present
+            if title_text.startswith('"') and title_text.endswith('"'):
+                title_text = title_text[1:-1]
+            elif title_text.startswith("'") and title_text.endswith("'"):
+                title_text = title_text[1:-1]
+            
+            # Substitute macro variables
+            expanded_title = self.macro_processor._substitute_variables(title_text)
+            
+            # Store the title for the next PROC
+            self.current_title = expanded_title
+        else:
+            print(f"ERROR: Invalid TITLE statement: {statement}")
     
     def get_data_set(self, name: str) -> Optional[pd.DataFrame]:
         """

@@ -157,6 +157,28 @@ class LibnameManager:
             print(f"ERROR: Could not list datasets in library {libname}: {e}")
             return []
     
+    def get_library_datasets(self, libname: str) -> Dict[str, pd.DataFrame]:
+        """
+        Get all datasets from a library as a dictionary.
+        
+        Args:
+            libname: Library name
+            
+        Returns:
+            Dictionary mapping dataset names to DataFrames
+        """
+        datasets = {}
+        try:
+            dataset_names = self.list_datasets(libname)
+            for dataset_name in dataset_names:
+                df = self.load_dataset(libname, dataset_name)
+                if df is not None:
+                    datasets[dataset_name] = df
+        except Exception as e:
+            print(f"ERROR: Could not get datasets from library {libname}: {e}")
+        
+        return datasets
+    
     def delete_dataset(self, libname: str, dataset_name: str) -> bool:
         """
         Delete a dataset from a library.

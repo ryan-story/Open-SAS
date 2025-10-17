@@ -44,6 +44,8 @@ Open-SAS provides an open-source alternative for statistical analysis by offerin
 - **PROC FREQ**: Frequency tables and cross-tabulations with options
 - **PROC SORT**: Data sorting with ascending/descending order
 - **PROC PRINT**: Data display and formatting
+- **PROC REG**: Linear regression analysis with MODEL, OUTPUT, and SCORE statements
+- **PROC SURVEYSELECT**: Random sampling with SRS method, SAMPRATE/N options, and OUTALL flag
 - **Macro variables**: %LET, %PUT statements
 - **Libraries**: LIBNAME functionality
 - **NOPRINT option**: Silent execution for procedures
@@ -187,6 +189,8 @@ python -c "from open_sas import SASInterpreter; print('Open-SAS loaded successfu
 - [x] Frequency analysis with cross-tabulations and options
 - [x] Data sorting with ascending/descending order
 - [x] Data display and formatting
+- [x] Linear regression analysis with PROC REG
+- [x] Random sampling with PROC SURVEYSELECT
 - [x] Silent execution options
 - [x] Jupyter notebook kernel
 - [x] VS Code extension with syntax highlighting
@@ -194,7 +198,7 @@ python -c "from open_sas import SASInterpreter; print('Open-SAS loaded successfu
 - [x] SAS-inspired behavior and syntax
 
 ### 🚧 Future Enhancements
-- [ ] Additional statistical procedures (SQL queries, regression analysis, etc.)
+- [ ] Additional statistical procedures (SQL queries, advanced regression, etc.)
 - [ ] Advanced macro functionality
 - [ ] Performance optimizations
 - [ ] Enhanced data connectivity options

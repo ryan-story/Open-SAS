@@ -180,10 +180,14 @@ class ExpressionEvaluator:
             
             # Replace column names with their values
             result = expression
-            for col in data.columns:
+            # Sort columns by length (longest first) to avoid partial replacements
+            sorted_cols = sorted(data.columns, key=len, reverse=True)
+            for col in sorted_cols:
                 if col in expression:
-                    # Replace column references with actual values
-                    result = result.replace(col, f"data['{col}']")
+                    # Use word boundaries to avoid partial replacements
+                    import re
+                    pattern = r'\b' + re.escape(col) + r'\b'
+                    result = re.sub(pattern, f"data['{col}']", result)
             
             # Debug: Arithmetic expression after column replacement
             

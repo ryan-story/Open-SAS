@@ -8,12 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **PROC REG**: Linear regression analysis with MODEL, OUTPUT, and SCORE statements
 - Comprehensive demo notebook (osas_walkthrough.ipynb)
 - NOPRINT option support across all procedures
 - Clean, professional output matching SAS behavior
 - Proper column ordering in PROC MEANS OUTPUT statements
+- Expression evaluator improvements for underscore variable names
 
 ### Fixed
+- Expression evaluator underscore variable name handling
 - PROC SORT ascending/descending order handling
 - PROC FREQ TABLES statement parsing with options
 - PROC MEANS OUTPUT dataset creation and display

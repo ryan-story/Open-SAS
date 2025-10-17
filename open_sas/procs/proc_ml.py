@@ -22,7 +22,7 @@ class ProcTree:
     def __init__(self):
         pass
     
-    def execute(self, data: pd.DataFrame, proc_info: ProcStatement) -> Dict[str, Any]:
+    def execute(self, data: pd.DataFrame, proc_info: ProcStatement, dataset_manager=None) -> Dict[str, Any]:
         """
         Execute PROC TREE on the given data.
         
@@ -191,14 +191,26 @@ class ProcTree:
         output.append("Classification Report")
         output.append("-" * 25)
         class_names = le_target.classes_
-        report = classification_report(y_test, y_pred, target_names=class_names, output_dict=True)
         
-        output.append(f"{'Class':<15} {'Precision':<10} {'Recall':<10} {'F1-Score':<10} {'Support':<10}")
-        output.append("-" * 55)
+        # Get unique classes in test data
+        unique_test_classes = np.unique(y_test)
+        unique_pred_classes = np.unique(y_pred)
         
-        for class_name in class_names:
-            if class_name in report:
-                output.append(f"{class_name:<15} {report[class_name]['precision']:<10.4f} {report[class_name]['recall']:<10.4f} {report[class_name]['f1-score']:<10.4f} {report[class_name]['support']:<10.0f}")
+        # Only include classes that appear in both test and prediction
+        valid_classes = np.intersect1d(unique_test_classes, unique_pred_classes)
+        valid_class_names = [class_names[i] for i in valid_classes]
+        
+        if len(valid_classes) > 0:
+            report = classification_report(y_test, y_pred, labels=valid_classes, target_names=valid_class_names, output_dict=True, zero_division=0)
+            
+            output.append(f"{'Class':<15} {'Precision':<10} {'Recall':<10} {'F1-Score':<10} {'Support':<10}")
+            output.append("-" * 55)
+            
+            for class_name in valid_class_names:
+                if class_name in report:
+                    output.append(f"{class_name:<15} {report[class_name]['precision']:<10.4f} {report[class_name]['recall']:<10.4f} {report[class_name]['f1-score']:<10.4f} {report[class_name]['support']:<10.0f}")
+        else:
+            output.append("No valid classes found in test data for classification report.")
         
         output.append("")
         
@@ -238,7 +250,7 @@ class ProcForest:
     def __init__(self):
         pass
     
-    def execute(self, data: pd.DataFrame, proc_info: ProcStatement) -> Dict[str, Any]:
+    def execute(self, data: pd.DataFrame, proc_info: ProcStatement, dataset_manager=None) -> Dict[str, Any]:
         """
         Execute PROC FOREST on the given data.
         
@@ -444,7 +456,7 @@ class ProcBoost:
     def __init__(self):
         pass
     
-    def execute(self, data: pd.DataFrame, proc_info: ProcStatement) -> Dict[str, Any]:
+    def execute(self, data: pd.DataFrame, proc_info: ProcStatement, dataset_manager=None) -> Dict[str, Any]:
         """
         Execute PROC BOOST on the given data.
         
