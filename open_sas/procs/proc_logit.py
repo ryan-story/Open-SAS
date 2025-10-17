@@ -36,14 +36,21 @@ class ProcLogit:
         }
         
         # Get MODEL specification
-        model_spec = proc_info.options.get('model', [])
-        if not model_spec or len(model_spec) < 2:
+        model_spec = proc_info.options.get('model', '')
+        if not model_spec:
             results['output_text'].append("ERROR: MODEL specification required (e.g., MODEL y = x1 x2).")
             return results
         
         # Parse model specification: MODEL y = x1 x2 x3
-        dependent_var = model_spec[0]
-        independent_vars = model_spec[2:]  # Skip '=' in position 1
+        # Split by '=' and then by spaces
+        if '=' in model_spec:
+            parts = model_spec.split('=')
+            dependent_var = parts[0].strip()
+            independent_vars = [var.strip() for var in parts[1].split() if var.strip()]
+        else:
+            # If no '=' found, treat as single variable
+            dependent_var = model_spec.strip()
+            independent_vars = []
         
         # Check if variables exist
         if dependent_var not in data.columns:

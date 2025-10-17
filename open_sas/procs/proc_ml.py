@@ -39,14 +39,21 @@ class ProcTree:
         }
         
         # Get MODEL specification
-        model_spec = proc_info.options.get('model', [])
-        if not model_spec or len(model_spec) < 2:
+        model_spec = proc_info.options.get('model', '')
+        if not model_spec:
             results['output_text'].append("ERROR: MODEL specification required (e.g., MODEL y = x1 x2).")
             return results
         
         # Parse model specification: MODEL y = x1 x2 x3
-        target_var = model_spec[0]
-        feature_vars = model_spec[2:]  # Skip '=' in position 1
+        # Split by '=' and then by spaces
+        if '=' in model_spec:
+            parts = model_spec.split('=')
+            target_var = parts[0].strip()
+            feature_vars = [var.strip() for var in parts[1].split() if var.strip()]
+        else:
+            # If no '=' found, treat as single variable
+            target_var = model_spec.strip()
+            feature_vars = []
         
         # Check if variables exist
         if target_var not in data.columns:
@@ -248,14 +255,21 @@ class ProcForest:
         }
         
         # Get MODEL specification
-        model_spec = proc_info.options.get('model', [])
-        if not model_spec or len(model_spec) < 2:
+        model_spec = proc_info.options.get('model', '')
+        if not model_spec:
             results['output_text'].append("ERROR: MODEL specification required (e.g., MODEL y = x1 x2).")
             return results
         
         # Parse model specification: MODEL y = x1 x2 x3
-        target_var = model_spec[0]
-        feature_vars = model_spec[2:]  # Skip '=' in position 1
+        # Split by '=' and then by spaces
+        if '=' in model_spec:
+            parts = model_spec.split('=')
+            target_var = parts[0].strip()
+            feature_vars = [var.strip() for var in parts[1].split() if var.strip()]
+        else:
+            # If no '=' found, treat as single variable
+            target_var = model_spec.strip()
+            feature_vars = []
         
         # Check if variables exist
         if target_var not in data.columns:
@@ -447,14 +461,21 @@ class ProcBoost:
         }
         
         # Get MODEL specification
-        model_spec = proc_info.options.get('model', [])
-        if not model_spec or len(model_spec) < 2:
+        model_spec = proc_info.options.get('model', '')
+        if not model_spec:
             results['output_text'].append("ERROR: MODEL specification required (e.g., MODEL y = x1 x2).")
             return results
         
         # Parse model specification: MODEL y = x1 x2 x3
-        target_var = model_spec[0]
-        feature_vars = model_spec[2:]  # Skip '=' in position 1
+        # Split by '=' and then by spaces
+        if '=' in model_spec:
+            parts = model_spec.split('=')
+            target_var = parts[0].strip()
+            feature_vars = [var.strip() for var in parts[1].split() if var.strip()]
+        else:
+            # If no '=' found, treat as single variable
+            target_var = model_spec.strip()
+            feature_vars = []
         
         # Check if variables exist
         if target_var not in data.columns:

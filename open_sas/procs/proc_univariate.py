@@ -148,7 +148,11 @@ class ProcUnivariate:
         t_stat, t_p = stats.ttest_1samp(clean_series, 0)
         output.append(f"  Test           -Statistic-    -----p Value------")
         output.append(f"  Student's t    {t_stat:>10.6f}    Pr > |t|    {t_p:>10.6f}")
-        output.append(f"  Sign           {np.sum(clean_series > 0):>10.0f}    Pr >= |M|   {2 * min(stats.binom_test(np.sum(clean_series > 0), n, 0.5), 1 - stats.binom_test(np.sum(clean_series > 0), n, 0.5)):>10.6f}")
+        # Use binomial test from scipy.stats
+        from scipy.stats import binom
+        sign_count = np.sum(clean_series > 0)
+        sign_p = 2 * min(binom.cdf(sign_count, n, 0.5), 1 - binom.cdf(sign_count, n, 0.5))
+        output.append(f"  Sign           {sign_count:>10.0f}    Pr >= |M|   {sign_p:>10.6f}")
         output.append(f"  Signed Rank    {np.sum(np.sign(clean_series) * np.arange(1, n+1)):>10.0f}    Pr >= |S|   {2 * min(0.5, 0.5):>10.6f}")
         output.append("")
         
