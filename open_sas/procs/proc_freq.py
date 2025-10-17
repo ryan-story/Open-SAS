@@ -7,6 +7,7 @@ tables and cross-tabulations.
 
 import pandas as pd
 import numpy as np
+from scipy import stats
 from typing import Dict, List, Any, Optional
 from ..parser.proc_parser import ProcStatement
 
@@ -126,6 +127,8 @@ class ProcFreq:
         options_list = [opt.strip().lower() for opt in options.split()] if options else []
         nocol = 'nocol' in options_list
         nopercent = 'nopercent' in options_list
+        chisq = 'chisq' in options_list
+        exact = 'exact' in options_list
         
         # Create crosstab
         crosstab = pd.crosstab(data[var1], data[var2], margins=True, margins_name="Total")
@@ -140,8 +143,16 @@ class ProcFreq:
         lines = self._format_crosstab(crosstab, var1, var2, nocol, nopercent)
         results['output_text'].extend(lines)
         
-        # Set output data
-        results['output_data'] = crosstab
+        # Add Chi-square test if requested
+        if chisq:
+            chi_square_results = self._perform_chi_square_test(crosstab, var1, var2, exact)
+            results['output_text'].extend(chi_square_results['output'])
+            results['output_data'] = {
+                'crosstab': crosstab,
+                'chi_square': chi_square_results['stats']
+            }
+        else:
+            results['output_data'] = crosstab
         
         return results
     
@@ -176,3 +187,97 @@ class ProcFreq:
                     lines.append(f"  {idx}: {row_total} ({row_percent:.1f}%)")
         
         return lines
+    
+    def _perform_chi_square_test(self, crosstab: pd.DataFrame, var1: str, var2: str, exact: bool = False) -> Dict[str, Any]:
+        """Perform Chi-square test of independence."""
+        
+        # Remove margins for chi-square test
+        test_table = crosstab.drop('Total', axis=0).drop('Total', axis=1)
+        
+        # Check if table is 2x2 for Fisher's exact test
+        is_2x2 = test_table.shape == (2, 2)
+        
+        output = []
+        stats_dict = {}
+        
+        output.append("")
+        output.append("Chi-Square Test of Independence")
+        output.append("-" * 40)
+        
+        # Perform Chi-square test
+        chi2_stat, chi2_p, dof, expected = stats.chi2_contingency(test_table)
+        
+        output.append(f"Chi-square statistic: {chi2_stat:.4f}")
+        output.append(f"Degrees of freedom: {dof}")
+        output.append(f"p-value: {chi2_p:.6f}")
+        output.append("")
+        
+        # Check expected frequencies
+        min_expected = expected.min()
+        output.append("Expected Frequencies")
+        output.append("-" * 25)
+        output.append(f"Minimum expected frequency: {min_expected:.2f}")
+        
+        if min_expected < 5:
+            output.append("Warning: Some expected frequencies are less than 5.")
+            if is_2x2:
+                output.append("Consider Fisher's exact test for 2x2 tables.")
+        else:
+            output.append("All expected frequencies are >= 5.")
+        
+        output.append("")
+        
+        # Fisher's exact test for 2x2 tables
+        if is_2x2 and exact:
+            try:
+                fisher_oddsratio, fisher_p = stats.fisher_exact(test_table)
+                output.append("Fisher's Exact Test (2x2 table)")
+                output.append("-" * 35)
+                output.append(f"Odds ratio: {fisher_oddsratio:.4f}")
+                output.append(f"p-value: {fisher_p:.6f}")
+                output.append("")
+                stats_dict['fisher_oddsratio'] = fisher_oddsratio
+                stats_dict['fisher_p'] = fisher_p
+            except Exception as e:
+                output.append(f"Fisher's exact test failed: {str(e)}")
+                output.append("")
+        
+        # Effect size (Cramér's V)
+        n = test_table.sum().sum()
+        cramers_v = np.sqrt(chi2_stat / (n * (min(test_table.shape) - 1)))
+        output.append(f"Effect size (Cramér's V): {cramers_v:.4f}")
+        output.append("")
+        
+        # Interpretation
+        if chi2_p < 0.001:
+            interpretation = "p < 0.001 (highly significant)"
+        elif chi2_p < 0.01:
+            interpretation = "p < 0.01 (very significant)"
+        elif chi2_p < 0.05:
+            interpretation = "p < 0.05 (significant)"
+        else:
+            interpretation = "p >= 0.05 (not significant)"
+        
+        output.append(f"Conclusion: {interpretation}")
+        if chi2_p < 0.05:
+            output.append("The variables are significantly associated.")
+        else:
+            output.append("No significant association between variables.")
+        
+        output.append("")
+        
+        # Store statistics
+        stats_dict.update({
+            'chi2_statistic': chi2_stat,
+            'chi2_p_value': chi2_p,
+            'degrees_of_freedom': dof,
+            'min_expected_freq': min_expected,
+            'cramers_v': cramers_v,
+            'significant': chi2_p < 0.05,
+            'is_2x2': is_2x2
+        })
+        
+        return {
+            'output': output,
+            'stats': stats_dict
+        }

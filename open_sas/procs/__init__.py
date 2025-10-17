@@ -17,6 +17,8 @@ from .proc_cluster import ProcCluster
 from .proc_npar1way import ProcNpar1way
 from .proc_ttest import ProcTtest
 from .proc_logit import ProcLogit
+from .proc_timeseries import ProcTimeseries
+from .proc_ml import ProcTree, ProcForest, ProcBoost
 
 __all__ = [
     "ProcMeans",
@@ -30,5 +32,9 @@ __all__ = [
     "ProcCluster",
     "ProcNpar1way",
     "ProcTtest",
-    "ProcLogit"
+    "ProcLogit",
+    "ProcTimeseries",
+    "ProcTree",
+    "ProcForest",
+    "ProcBoost"
 ]
