@@ -15,7 +15,7 @@ from .parser.proc_parser import ProcParser
 from .parser.macro_parser import MacroParser
 from .procs import (
     ProcMeans, ProcFreq, ProcPrint, ProcSort, 
-    ProcContents, ProcUnivariate, ProcCorr, ProcFactor, ProcCluster, ProcNpar1way, ProcTtest, ProcLogit, ProcTimeseries, ProcTree, ProcForest, ProcBoost
+    ProcContents, ProcUnivariate, ProcCorr, ProcFactor, ProcCluster, ProcNpar1way, ProcTtest, ProcLogit, ProcTimeseries, ProcTree, ProcForest, ProcBoost, ProcLanguage
 )
 from .utils.expression_parser import ExpressionParser
 from .utils.expression_evaluator import ExpressionEvaluator
@@ -67,7 +67,8 @@ class SASInterpreter:
             'ARIMA': ProcTimeseries(),  # Alias for TIMESERIES
             'TREE': ProcTree(),
             'FOREST': ProcForest(),
-            'BOOST': ProcBoost()
+            'BOOST': ProcBoost(),
+            'LANGUAGE': ProcLanguage()
         }
         
     def run_file(self, file_path: str) -> None:

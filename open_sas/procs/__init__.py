@@ -19,6 +19,7 @@ from .proc_ttest import ProcTtest
 from .proc_logit import ProcLogit
 from .proc_timeseries import ProcTimeseries
 from .proc_ml import ProcTree, ProcForest, ProcBoost
+from .proc_language import ProcLanguage
 
 __all__ = [
     "ProcMeans",
@@ -36,5 +37,6 @@ __all__ = [
     "ProcTimeseries",
     "ProcTree",
     "ProcForest",
-    "ProcBoost"
+    "ProcBoost",
+    "ProcLanguage"
 ]
