@@ -14,6 +14,9 @@ from .proc_univariate import ProcUnivariate
 from .proc_corr import ProcCorr
 from .proc_factor import ProcFactor
 from .proc_cluster import ProcCluster
+from .proc_npar1way import ProcNpar1way
+from .proc_ttest import ProcTtest
+from .proc_logit import ProcLogit
 
 __all__ = [
     "ProcMeans",
@@ -24,5 +27,8 @@ __all__ = [
     "ProcUnivariate",
     "ProcCorr",
     "ProcFactor",
-    "ProcCluster"
+    "ProcCluster",
+    "ProcNpar1way",
+    "ProcTtest",
+    "ProcLogit"
 ]
