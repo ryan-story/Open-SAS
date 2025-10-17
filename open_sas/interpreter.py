@@ -15,7 +15,7 @@ from .parser.proc_parser import ProcParser
 from .parser.macro_parser import MacroParser
 from .procs import (
     ProcMeans, ProcFreq, ProcPrint, ProcSort, 
-    ProcContents, ProcUnivariate
+    ProcContents, ProcUnivariate, ProcCorr, ProcFactor, ProcCluster
 )
 from .utils.expression_parser import ExpressionParser
 from .utils.expression_evaluator import ExpressionEvaluator
@@ -56,7 +56,10 @@ class SASInterpreter:
             'PRINT': ProcPrint(),
             'SORT': ProcSort(),
             'CONTENTS': ProcContents(),
-            'UNIVARIATE': ProcUnivariate()
+            'UNIVARIATE': ProcUnivariate(),
+            'CORR': ProcCorr(),
+            'FACTOR': ProcFactor(),
+            'CLUSTER': ProcCluster()
         }
         
     def run_file(self, file_path: str) -> None:
