@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="open-sas",
-    version="0.1.1",
+    version="0.1.2",
     author="Ryan Story",
     author_email="ryan@stryve.com",
     description="Python-based SAS interpreter with Jupyter notebook support",

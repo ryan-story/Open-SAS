@@ -11,16 +11,21 @@ import io
 import traceback
 import logging
 import os
+import tempfile
+from pathlib import Path
 from contextlib import redirect_stdout, redirect_stderr
 from ipykernel.ipkernel import IPythonKernel
 from open_sas import SASInterpreter
 
 # Set up logging (WARNING level to suppress INFO messages)
+# Use platform-independent temp directory
+log_dir = Path(tempfile.gettempdir())
+log_file = log_dir / 'osas_kernel_debug.log'
 logging.basicConfig(
     level=logging.WARNING,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('/tmp/osas_kernel_debug.log')
+        logging.FileHandler(str(log_file))
     ]
 )
 logger = logging.getLogger('OSASKernel')
@@ -30,7 +35,7 @@ class OSASKernel(IPythonKernel):
     """Jupyter kernel for Open-SAS."""
     
     implementation = 'open_sas'
-    implementation_version = '0.1.1'
+    implementation_version = '0.1.2'
     language = 'osas'
     language_version = '9.4'
     language_info = {

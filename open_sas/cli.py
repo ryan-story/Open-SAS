@@ -39,7 +39,7 @@ Examples:
     parser.add_argument(
         '--version',
         action='version',
-        version='Open-SAS 0.1.1'
+        version='Open-SAS 0.1.2'
     )
     
     parser.add_argument(
