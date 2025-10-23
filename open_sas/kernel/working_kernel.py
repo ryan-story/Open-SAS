@@ -16,7 +16,7 @@ class WorkingOSASKernel(Kernel):
     """Working Jupyter kernel for Open-SAS."""
     
     implementation = 'Open-SAS'
-    implementation_version = '0.1.0'
+    implementation_version = '0.1.1'
     language = 'sas'
     language_version = '9.4'
     language_info = {

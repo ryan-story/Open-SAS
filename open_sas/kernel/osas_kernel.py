@@ -30,7 +30,7 @@ class OSASKernel(IPythonKernel):
     """Jupyter kernel for Open-SAS."""
     
     implementation = 'open_sas'
-    implementation_version = '0.1.0'
+    implementation_version = '0.1.1'
     language = 'osas'
     language_version = '9.4'
     language_info = {

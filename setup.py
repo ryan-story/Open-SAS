@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="open-sas",
-    version="0.1.0",
+    version="0.1.1",
     author="Ryan Story",
     author_email="ryan@stryve.com",
     description="Python-based SAS interpreter with Jupyter notebook support",
@@ -28,6 +28,8 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Topic :: Scientific/Engineering",
         "Topic :: Software Development :: Interpreters",
     ],
@@ -44,6 +46,8 @@ setup(
         "transformers>=4.20.0",
         "torch>=1.12.0",
         "duckdb>=1.0.0",
+        "jupyter>=1.0.0",
+        "ipykernel>=6.0.0",
     ],
     extras_require={
         "dev": [

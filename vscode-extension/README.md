@@ -25,7 +25,8 @@
    ```bash
    pip install open-sas
    ```
-3. Install the Jupyter kernel (optional, for notebook support):
+   This will automatically install all dependencies including Jupyter kernel support.
+3. Install the Jupyter kernel for notebook support:
    ```bash
    python -m open_sas.kernel install
    ```

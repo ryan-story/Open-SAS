@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2024-10-23
+
+### Fixed
+- **Critical**: Moved `ipykernel` and `jupyter` from optional to required dependencies to fix kernel installation errors
+- Added Python 3.12 and 3.13 support to classifiers
+
 ### Added
 - **PROC REG**: Linear regression analysis with MODEL, OUTPUT, and SCORE statements
 - Comprehensive demo notebook (osas_walkthrough.ipynb)
@@ -15,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Proper column ordering in PROC MEANS OUTPUT statements
 - Expression evaluator improvements for underscore variable names
 
-### Fixed
+### Fixed (Additional)
 - Expression evaluator underscore variable name handling
 - PROC SORT ascending/descending order handling
 - PROC FREQ TABLES statement parsing with options
