@@ -257,7 +257,7 @@ async function getOpenSASPath(): Promise<string> {
     
     if (!openSASPath) {
         // Try to find Open-SAS in the extension directory
-        const extensionPath = vscode.extensions.getExtension('ryan-story.open-sas')?.extensionPath;
+        const extensionPath = vscode.extensions.getExtension('ryanblakestory.open-sas')?.extensionPath;
         if (extensionPath) {
             const runnerPath = path.join(extensionPath, 'python', 'osas_runner.py');
             if (require('fs').existsSync(runnerPath)) {
