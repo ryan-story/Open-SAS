@@ -2,7 +2,7 @@
   "name": "open-sas",
   "displayName": "Open-SAS: SAS-Like Statistical Notebook",
   "description": "Run SAS-style programs in VS Code with a fast, Python-powered interpreter.",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "publisher": "RyanBlakeStory",
   "author": {
     "name": "Ryan Story",

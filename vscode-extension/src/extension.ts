@@ -256,23 +256,13 @@ async function getOpenSASPath(): Promise<string> {
     let openSASPath = config.get<string>('openSASPath');
     
     if (!openSASPath) {
-        // Try to find Open-SAS in the extension directory
-        const extensionPath = vscode.extensions.getExtension('ryanblakestory.open-sas')?.extensionPath;
-        if (extensionPath) {
-            const runnerPath = path.join(extensionPath, 'python', 'osas_runner.py');
-            if (require('fs').existsSync(runnerPath)) {
-                openSASPath = runnerPath;
-            }
-        }
-        
-        if (!openSASPath) {
-            // Try to use the installed package
-            try {
-                await executeCommand('python', ['-c', 'import open_sas; print("OK")']);
-                openSASPath = 'python -m open_sas.cli';
-            } catch {
-                throw new Error('Open-SAS not found. Please install the open-sas package or set the open-sas.openSASPath setting.');
-            }
+        // Always use the installed Python package directly
+        // This avoids version-specific path issues
+        try {
+            await executeCommand('python', ['-c', 'import open_sas; print("OK")']);
+            openSASPath = 'python -m open_sas';
+        } catch {
+            throw new Error('Open-SAS not found. Please install the open-sas package or set the open-sas.openSASPath setting.');
         }
     }
     
